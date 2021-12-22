@@ -1,7 +1,7 @@
 from simple_blog.models import Category, Post, Tag
 from django.template import Library
 from django.template.loader import get_template, select_template
-
+from django.utils.translation import gettext_lazy as _
 from simple_blog.utils import get_gravatar_url
 
 register = Library()
@@ -22,7 +22,8 @@ def social_share_widget(context, object_title, object_or_url, title="Share this"
 
 
 @register.inclusion_tag("components/tags_list.html", takes_context=True)
-def tags_list(context, index, title="Popular Tags", number=20):
+def tags_list(context, index, number=20, **kwargs):
+    title = kwargs.get("title", None) or _("Tags")
     tags = Tag.objects.all()[:number]
     return {
         "title": title,
@@ -33,7 +34,8 @@ def tags_list(context, index, title="Popular Tags", number=20):
 
 
 @register.inclusion_tag("components/categories_list.html", takes_context=True)
-def categories_list(context, index, title="Categories", number=20):
+def categories_list(context, index, number=20, **kwargs):
+    title = kwargs.get("title", None) or _("Categories")
     categories = Category.objects.all()[:number]
     return {
         "title": title,
@@ -54,6 +56,9 @@ def render_posts_list(request, queryset, template_name, **kwargs):
 def related_posts_by_category(context, index, post, limit=5, template_name=None, **kwargs):
     request = context["request"]
     template = template_name or "components/post_list.html"
+    title = kwargs.get("title", None)
+    if not title:
+        kwargs["title"] = _("Related %s") % index.opts.verbose_name
     category = getattr(post, "category", None)
     queryset = []
     if category:
@@ -70,6 +75,9 @@ def related_posts_by_category(context, index, post, limit=5, template_name=None,
 @register.simple_tag(takes_context=True, name="related_posts_by_tags")
 def related_posts_by_tags(context, index, post, limit=5, template_name=None, **kwargs):
     request = context["request"]
+    title = kwargs.get("title", None)
+    if not title:
+        kwargs["title"] = _("Related %s") % index.opts.verbose_name
     template = template_name or "components/post_list.html"
     tags = [t.id for t in post.tags.all()]
     queryset = Post.objects.descendant_of(index).filter(tags__id__in=tags).exclude(id=post.id).live()[:limit]
@@ -79,6 +87,9 @@ def related_posts_by_tags(context, index, post, limit=5, template_name=None, **k
 @register.simple_tag(takes_context=True, name="recent_posts")
 def recent_posts(context, index, limit=5, template_name=None, **kwargs):
     request = context["request"]
+    title = kwargs.get("title", None)
+    if not title:
+        kwargs["title"] = _("Recent %s") % index.opts.verbose_name
     template = template_name or "components/post_list.html"
     queryset = Post.objects.descendant_of(index).order_by("-first_published_at").live()[:limit]
     return render_posts_list(request, queryset, template, **kwargs)
@@ -87,6 +98,9 @@ def recent_posts(context, index, limit=5, template_name=None, **kwargs):
 @register.simple_tag(takes_context=True, name="popular_posts")
 def popular_posts(context, index, limit=5, template_name=None, **kwargs):
     request = context["request"]
+    title = kwargs.get("title", None)
+    if not title:
+        kwargs["title"] = _("Popular %s") % index.opts.verbose_name
     template = template_name or "components/post_list.html"
     queryset = Post.objects.descendant_of(index).order_by("-view_count").live()[:limit]
     return render_posts_list(request, queryset, template, **kwargs)
@@ -95,6 +109,9 @@ def popular_posts(context, index, limit=5, template_name=None, **kwargs):
 @register.simple_tag(takes_context=True, name="featured_posts")
 def featured_posts(context, index, limit=5, template_name=None, **kwargs):
     request = context["request"]
+    title = kwargs.get("title", None)
+    if not title:
+        kwargs["title"] = _("Featured %s") % index.opts.verbose_name
     template = template_name or "components/post_list.html"
     queryset = Post.objects.descendant_of(index).filter(featured=True).live()[:limit]
     return render_posts_list(request, queryset, template, **kwargs)

@@ -4,7 +4,7 @@
 
 <div class="widget post-list-widget">
   {% if title %}
-    <h3 class="widget-title">{{ title }}</h3>
+    <h3 class="widget-title">{{ title|title }}</h3>
   {% endif %}
   <div class="widget-body">
     {% for post in post_list %}

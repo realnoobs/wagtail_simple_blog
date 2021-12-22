@@ -23,14 +23,14 @@ SIMPLE_BLOG_DEFAULTS: Dict[str, Any] = {
         "SERIES_ITEM": "simple_blog/post.html",
         "SEARCH": "simple_blog/search.html",
     },
-    "ITEMS_PER_PAGE": 4,
-    "BLOG_ITEMS_PER_PAGE": 4,
+    "ITEMS_PER_PAGE": 12,
+    "BLOG_ITEMS_PER_PAGE": 12,
     "SEARCH_ITEMS_PER_PAGE": 12,
     "SUBPAGE_TYPES": ["simple_blog.Article", "simple_blog.Series"],
     "PARENTPAGE_TYPES": None,
     "EXTRA_STREAMFIELDS": [],
     "PAGE_CACHE_TIMEOUT": 0,
-    "DISQUS_ACCOUNT": "baristandlab",
+    "DISQUS_ACCOUNT": None,
 }
 
 # List of settings that may be in string import notation.

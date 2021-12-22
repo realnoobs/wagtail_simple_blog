@@ -3,7 +3,6 @@
 
 {% block sidebar_body %}
   {{ block.super }}
-  {{ index }}
-  {% related_posts_by_category index=index post=page title="Related Posts" %}
-  {% recent_posts index=index title="Recent Posts" %}
+  {% related_posts_by_category index=index post=page %}
+  {% recent_posts index=index %}
 {% endblock sidebar_body %}

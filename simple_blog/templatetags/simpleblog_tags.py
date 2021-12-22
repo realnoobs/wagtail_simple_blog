@@ -22,8 +22,7 @@ def social_share_widget(context, object_title, object_or_url, title="Share this"
 
 
 @register.inclusion_tag("components/tags_list.html", takes_context=True)
-def tags_list(context, blog_slug, title="Popular Tags", number=20):
-    blog = Blog.objects.filter(slug=blog_slug)
+def tags_list(context, blog=None, title="Popular Tags", number=20):
     if not blog:
         blog = Blog.objects.first()
     tags = Tag.objects.all()[:number]
@@ -36,8 +35,7 @@ def tags_list(context, blog_slug, title="Popular Tags", number=20):
 
 
 @register.inclusion_tag("components/categories_list.html", takes_context=True)
-def categories_list(context, blog_slug, title="Categories", number=20):
-    blog = Blog.objects.filter(slug=blog_slug)
+def categories_list(context, blog=None, title="Categories", number=20):
     if not blog:
         blog = Blog.objects.first()
     categories = Category.objects.all()[:number]

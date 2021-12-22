@@ -336,14 +336,20 @@ class Series(Post):
         return context
 
 
-class Blog(RoutablePageMixin, BasePage):
+class BaseIndex(RoutablePageMixin, BasePage):
+
     children_class = Post
     paginator_class = Paginator
-    paginate_by = blog_settings.BLOG_ITEMS_PER_PAGE
     card_type = "article"
     paginate_query_param = "page"
     paginate_last_page_strings = ("last",)
-    subpage_types = blog_settings.SUBPAGE_TYPES
+    paginate_by = blog_settings.ITEMS_PER_PAGE
+
+    class Meta:
+        abstract = True
+
+    def get_children_class(self):
+        return self.children_class
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
@@ -403,3 +409,8 @@ class Blog(RoutablePageMixin, BasePage):
         if page_number in self.paginate_last_page_strings:
             page_number = paginator.num_pages
         return page_number
+
+
+class Blog(BaseIndex):
+    paginate_by = blog_settings.BLOG_ITEMS_PER_PAGE
+    subpage_types = blog_settings.SUBPAGE_TYPES

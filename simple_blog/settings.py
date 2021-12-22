@@ -23,6 +23,7 @@ SIMPLE_BLOG_DEFAULTS: Dict[str, Any] = {
         "SERIES_ITEM": "simple_blog/post.html",
         "SEARCH": "simple_blog/search.html",
     },
+    "ITEMS_PER_PAGE": 4,
     "BLOG_ITEMS_PER_PAGE": 4,
     "SEARCH_ITEMS_PER_PAGE": 12,
     "SUBPAGE_TYPES": ["simple_blog.Article", "simple_blog.Series"],

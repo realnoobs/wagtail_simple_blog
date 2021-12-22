@@ -6,6 +6,11 @@
   font-family: "Exo", sans-serif !important;
 }
 
+img.full-width {
+  max-width: 100%;
+  height: auto;
+}
+
 /* BASE */
 h1,
 h2,

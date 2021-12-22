@@ -4,14 +4,18 @@
   <h3 class="h5">{{ value.title }}</h3>
   {% for page in value.pages %}
     <a href="{% pageurl page %}" class="d-block mb-3">
-      <div class="page-item d-flex">
-        <div class="me-3">
-          {% image page.thumbnail fill-185x105 as thumbnail %}
-          <img src="{{ thumbnail.url }}" alt="header_image"/>
-        </div>
+      <div class="page-item border p-2 d-flex">
+        {% if value.show_thumbnail %}
+          <div class="me-3">
+            {% image page.thumbnail fill-185x105 as thumbnail %}
+            <img src="{{ thumbnail.url }}" alt="header_image"/>
+          </div>
+        {% endif %}
         <div class="d-flex flex-column justify-content-center">
           <h2 class="h6 mb-0">{{ page.title }}</h2>
-          <div class="richtext-no-p d-none d-md-block">{{ page.summary|truncatechars_html:120|safe }}</div>
+          {% if value.show_summary %}
+            <div class="richtext-no-p d-none d-md-block">{{ page.summary|truncatechars_html:120|safe }}</div>
+          {% endif %}
         </div>
       </div>
     </a>

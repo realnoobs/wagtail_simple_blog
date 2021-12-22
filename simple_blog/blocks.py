@@ -1,9 +1,12 @@
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.core.blocks.field_block import (
     BooleanBlock,
     CharBlock,
     ChoiceBlock,
     FloatBlock,
+    IntegerBlock,
     PageChooserBlock,
     RichTextBlock,
     TextBlock,
@@ -63,7 +66,8 @@ typed_table = TypedTableBlock(
                 ]
             ),
         ),
-    ], group="Content Blocks"
+    ],
+    group="Content Blocks",
 )
 
 
@@ -184,11 +188,40 @@ class CustomTableBlock(TableBlock):
 
 
 class PageListBlock(StructBlock):
+
+    LIST = "list"
+    CARD = "card"
+
+    STYLE_CHOICE = (
+        (LIST, "Page List"),
+        (CARD, "Page Card"),
+    )
+
     title = CharBlock(required=False)
+    style = ChoiceBlock(choices=STYLE_CHOICE, default=LIST)
+    columns = IntegerBlock(min_value=1, max_value=4, default=2)
+    show_thumbnail = BooleanBlock(default=True, required=False)
+    show_summary = BooleanBlock(default=True, required=False)
     pages = ListBlock(child_block=PageChooserBlock(page_type="simple_blog.Post"))
 
+    def get_template(self, value, context=None):
+        templates_map = {
+            PageListBlock.LIST: "streamblocks/pagelist_block.html",
+            PageListBlock.CARD: "streamblocks/pagecard_block.html",
+        }
+        return templates_map[value['style']]
+
+    def render(self, value, context=None):
+        template = self.get_template(value, context=context)
+        if not template:
+            return self.render_basic(value, context=context)
+        if context is None:
+            new_context = self.get_context(value)
+        else:
+            new_context = self.get_context(value, parent_context=dict(context))
+        return mark_safe(render_to_string(template, new_context))
+
     class Meta:
-        template = "streamblocks/pagelist_block.html"
         group = "Relational Blocks"
 
 

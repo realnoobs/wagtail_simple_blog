@@ -1,0 +1,26 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="block pagelist-block">
+  <h3 class="h5">{{ value.title }}</h3>
+  <div class="row row-cols-2 row-cols-md-{{ value.columns }} g-3">
+    {% for page in value.pages %}
+      <a href="{% pageurl page %}">
+        <div class="card">
+          {% if value.show_thumbnail %}
+            <div class="card-header p-0">
+              {% image page.thumbnail fill-370x210 as thumbnail %}
+              <img src="{{ thumbnail.url }}" class="img-fluid" alt="header_image"/>
+            </div>
+          {% endif %}
+          <div class="card-body">
+            <h2 class="h6 mb-0">{{ page.title }}</h2>
+            {% if value.show_summary %}
+              <div class="richtext-no-p d-none d-md-block">{{ page.summary|truncatechars_html:120|safe }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+</section>

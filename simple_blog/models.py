@@ -309,7 +309,7 @@ class Post(BasePage):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context["blog"] = self.get_parent().specific
+        context["index"] = self.get_parent().specific
         context["prev"] = self.get_prev_siblings().live().first()
         context["next"] = self.get_next_siblings().live().first()
         context["currents"] = []
@@ -353,7 +353,7 @@ class BaseIndex(RoutablePageMixin, BasePage):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context["blog"] = self
+        context["index"] = self
         context["posts"] = self.posts
         context["currents"] = self.currents
         return context
@@ -392,7 +392,7 @@ class BaseIndex(RoutablePageMixin, BasePage):
     def post_list(self, request, *args, **kwargs):
         queryset = self.get_posts()
         self.posts = self.get_paginated_queryset(request, queryset)
-        self.currents = ["blog"]
+        self.currents = ["index"]
         return self.render(request)
 
     def get_paginated_queryset(self, request, queryset):

@@ -1,4 +1,4 @@
-from simple_blog.models import Blog, Category, Post, Tag
+from simple_blog.models import Category, Post, Tag
 from django.template import Library
 from django.template.loader import get_template, select_template
 
@@ -22,27 +22,23 @@ def social_share_widget(context, object_title, object_or_url, title="Share this"
 
 
 @register.inclusion_tag("components/tags_list.html", takes_context=True)
-def tags_list(context, blog=None, title="Popular Tags", number=20):
-    if not blog:
-        blog = Blog.objects.first()
+def tags_list(context, index, title="Popular Tags", number=20):
     tags = Tag.objects.all()[:number]
     return {
         "title": title,
         "request": context["request"],
-        "blog_page": blog,
+        "index": index,
         "tags": tags,
     }
 
 
 @register.inclusion_tag("components/categories_list.html", takes_context=True)
-def categories_list(context, blog=None, title="Categories", number=20):
-    if not blog:
-        blog = Blog.objects.first()
+def categories_list(context, index, title="Categories", number=20):
     categories = Category.objects.all()[:number]
     return {
         "title": title,
         "request": context["request"],
-        "blog_page": blog,
+        "index": index,
         "currents": context["currents"],
         "categories": categories,
     }
@@ -55,38 +51,53 @@ def render_posts_list(request, queryset, template_name, **kwargs):
 
 
 @register.simple_tag(takes_context=True, name="related_posts_by_category")
-def related_posts_by_category(context, post, limit=5, template_name="components/post_list.html", **kwargs):
+def related_posts_by_category(context, index, post, limit=5, template_name=None, **kwargs):
+    request = context["request"]
+    template = template_name or "components/post_list.html"
     category = getattr(post, "category", None)
     queryset = []
     if category:
         categories = [cat.id for cat in post.category.get_descendants(include_self=True)]
-        queryset = Post.objects.filter(category__in=categories).exclude(id=post.id).live()[:limit]
-    return render_posts_list(context["request"], queryset, template_name, **kwargs)
+        queryset = (
+            Post.objects.descendant_of(index)
+            .filter(category__in=categories)
+            .exclude(id=post.id)
+            .live()[:limit]
+        )
+    return render_posts_list(request, queryset, template, **kwargs)
 
 
 @register.simple_tag(takes_context=True, name="related_posts_by_tags")
-def related_posts_by_tags(context, post, limit=5, template_name="components/post_list.html", **kwargs):
+def related_posts_by_tags(context, index, post, limit=5, template_name=None, **kwargs):
+    request = context["request"]
+    template = template_name or "components/post_list.html"
     tags = [t.id for t in post.tags.all()]
-    queryset = Post.objects.filter(tags__id__in=tags).exclude(id=post.id).live()[:limit]
-    return render_posts_list(context["request"], queryset, template_name, **kwargs)
+    queryset = Post.objects.descendant_of(index).filter(tags__id__in=tags).exclude(id=post.id).live()[:limit]
+    return render_posts_list(request, queryset, template, **kwargs)
 
 
 @register.simple_tag(takes_context=True, name="recent_posts")
-def recent_posts(context, limit=5, template_name="components/post_list.html", **kwargs):
-    queryset = Post.objects.all().order_by("-first_published_at").live()[:limit]
-    return render_posts_list(context["request"], queryset, template_name, **kwargs)
+def recent_posts(context, index, limit=5, template_name=None, **kwargs):
+    request = context["request"]
+    template = template_name or "components/post_list.html"
+    queryset = Post.objects.descendant_of(index).order_by("-first_published_at").live()[:limit]
+    return render_posts_list(request, queryset, template, **kwargs)
 
 
 @register.simple_tag(takes_context=True, name="popular_posts")
-def popular_posts(context, limit=5, template_name="components/post_list.html", **kwargs):
-    queryset = Post.objects.all().order_by("-view_count").live()[:limit]
-    return render_posts_list(context["request"], queryset, template_name, **kwargs)
+def popular_posts(context, index, limit=5, template_name=None, **kwargs):
+    request = context["request"]
+    template = template_name or "components/post_list.html"
+    queryset = Post.objects.descendant_of(index).order_by("-view_count").live()[:limit]
+    return render_posts_list(request, queryset, template, **kwargs)
 
 
 @register.simple_tag(takes_context=True, name="featured_posts")
-def featured_posts(context, limit=5, template_name="components/post_list.html", **kwargs):
-    queryset = Post.objects.filter(featured=True).live()[:limit]
-    return render_posts_list(context["request"], queryset, template_name, **kwargs)
+def featured_posts(context, index, limit=5, template_name=None, **kwargs):
+    request = context["request"]
+    template = template_name or "components/post_list.html"
+    queryset = Post.objects.descendant_of(index).filter(featured=True).live()[:limit]
+    return render_posts_list(request, queryset, template, **kwargs)
 
 
 @register.simple_tag(takes_context=True)

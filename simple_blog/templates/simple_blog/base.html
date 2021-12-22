@@ -58,8 +58,8 @@
         {% block sidebar %}
           <div class="sidebar">
             {% block sidebar_body %}
-              {% categories_list blog=blog number=10 %}  
-              {% tags_list blog=blog number=10 %}
+              {% categories_list index=index number=10 %}  
+              {% tags_list index=index number=10 %}
             {% endblock sidebar_body %}
             {% include 'components/social_share.html' with title="Share this .." object_or_url=page.get_url object_title=page.title %}
           </div>

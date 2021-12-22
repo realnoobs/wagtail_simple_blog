@@ -5,13 +5,13 @@
   {{ block.super }}
   
   {% block bootstrap_theme %}
-    <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/bootstrap.min.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/blog.css' %}"> 
   {% endblock %}
 
   <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/github.min.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/lightgallery.min.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/lightgallery-transitions.min.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/blog.css' %}">
 {% endblock extra_css %}
 
 {% block extra_js %}
@@ -25,15 +25,8 @@
   <script type="text/javascript" src="{% static 'simple_blog/js/plugins/highlight.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'simple_blog/js/plugins/gist.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'simple_blog/js/plugins/lightgallery.min.js' %}"></script>
-  <script>
-    hljs.highlightAll();
-    window.GistEmbed.init();
-    mermaid.initialize({ startOnLoad: true });
-    var galleries = document.querySelectorAll('.lightgallery');
-    galleries.forEach(function(el){
-      lightGallery(el); 
-    })
-  </script>
+  <script type="text/javascript" src="{% static 'simple_blog/js/blog.js' %}"></script>
+  
 {% endblock extra_js %}
 
 {% block content %}

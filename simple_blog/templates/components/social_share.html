@@ -1,0 +1,16 @@
+{% load i18n social_share %}
+
+<div class="widget social-share-widget">
+  {% if title %}
+    <h3 class="widget-title">{{ title }}</h3>
+  {% endif %}
+  <div class="widget-body">
+    <div class="social-share">
+      {% post_to_facebook object_or_url "<i class='mdi mdi-facebook'></i>" %}
+      {% post_to_twitter "New Stuff: {{ object_title }}. Check it out!" object_or_url "<i class='mdi mdi-twitter'></i>"%}
+      {% post_to_reddit "New Stuff: {{ object_title }}" object_or_url "<i class='mdi mdi-reddit'></i>" %}
+      {% post_to_telegram "New Stuff: {{ object_title }}" object_or_url "<i class='mdi mdi-send-circle'></i>" %}
+      {% post_to_whatsapp object_or_url "<i class='mdi mdi-whatsapp'></i>" %}
+    </div>
+  </div>
+</div>

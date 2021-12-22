@@ -1,0 +1,8 @@
+{% load wagtailembeds_tags %}
+
+<section class="block oembed-block">
+  <div class="ratio ratio-16x9">{% embed value.embed.url %}</div>
+  {% if value.caption %}
+    <div class="block-caption">{{ value.caption }}</div>
+  {% endif %}
+</section>

@@ -1,0 +1,35 @@
+{% load i18n simpleblog_tags %}
+
+{% if page_object.has_next or page_object.has_previous %}
+  <div class="pagination-wrapper pb-3 {{ extra_classes }}">
+    <ul class="pagination">
+      {% if page_object.number == 1 %}
+          <li class="page-item disabled"><span class="page-link">{% trans "First" %}</span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?{% replace_param page=1 %}">{% trans "First" %}</a></li>
+      {% endif %}
+      {% if page_object.has_previous %}
+        <li class="page-item"><a class="page-link" href="?{% replace_param page=page_object.previous_page_number %}">{% trans "Prev" %}</a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">{% trans "Prev" %}</span></li>
+      {% endif %}
+      {% for i in page_object.paginator|proper_paginate:page_object.number %}
+        {% if page_object.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only visually-hidden hidden">(current)</span></span></li>
+        {% else %}
+            <li class="page-item"><a class="page-link" href="?{% replace_param page=i %}">{{ i }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if page_object.has_next %}
+        <li class="page-item"><a class="page-link" href="?{% replace_param page=page_object.next_page_number %}">{% trans "Next" %}</a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">{% trans "Next" %}</span></li>
+      {% endif %}
+      {% if page_object.number == page_object.paginator.num_pages %}
+        <li class="page-item disabled"><span class="page-link">{% trans "Last" %}</span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?{% replace_param page=page_object.paginator.num_pages %}">{% trans "Last" %}</a></li>
+      {% endif %}
+    </ul>
+  </div>
+{% endif %}

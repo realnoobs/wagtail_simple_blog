@@ -1,0 +1,8 @@
+{% load wagtailcore_tags %}
+<section class="block gallery-block">
+  <div class="d-flex flex-wrap justify-content-lg-center lightgallery">
+    {% for image_block in value.images %}
+      {% include_block image_block %}
+    {% endfor %}
+  </div>
+</section>

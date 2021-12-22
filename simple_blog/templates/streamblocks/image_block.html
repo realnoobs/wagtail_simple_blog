@@ -1,0 +1,3 @@
+{% load wagtailimages_tags %}
+{% image value.image fill-200x200 as thumbnail %}
+<a href="{{ value.image.file.url }}" class="d-block m-2"><img src="{{ thumbnail.url }}" alt="gallery-item"></a>

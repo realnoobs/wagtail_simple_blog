@@ -1,0 +1,9 @@
+<section class="block code-block">
+  <div class="code-header">File: {{ value.filename }}</div>
+  <pre class="code-body">
+    <code class="language-{{ value.language }} hljs">{{ value.code|safe }}</code>
+  </pre>
+  {% if value.caption %}
+    <div class="block-caption">{{ value.caption }}</div>
+  {% endif %}
+</section>

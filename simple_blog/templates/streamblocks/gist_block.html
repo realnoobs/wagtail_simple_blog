@@ -1,0 +1,11 @@
+<section class="block gist-block">
+  <code
+    data-gist-id="{{ value.id }}"
+    {% if value.file %}data-gist-file="{{ value.file }}"{% endif %}
+    {% if value.line %}data-gist-line="{{ value.line }}"{% endif %}
+    {% if value.highlight_line %}data-gist-highlight-line="{{ value.highlight_line }}"{% endif %}
+    {% if value.hide_footer %}data-gist-hide-footer="{{ value.hide_footer|lower }}"{% endif %}
+    {% if value.caption %}data-gist-caption="{{ value.caption }}"{% endif %}
+    >
+  </code>
+</section>

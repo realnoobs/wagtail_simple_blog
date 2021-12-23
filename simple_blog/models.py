@@ -321,6 +321,7 @@ class Post(BasePage):
 
     template = blog_settings.TEMPLATES["POST"]
     card_type = "post"
+    index_page_class = None
     parent_page_types = ["simple_blog.Blog"]
     subpage_types = []
 
@@ -343,9 +344,21 @@ class Post(BasePage):
     class Meta:
         ordering = ("-first_published_at",)
 
+    def get_index_page_class(self):
+        return self.index_page_class or Blog
+
+    def get_index_page(self):
+        index_class = self.get_index_page_class()
+        ancestors = self.get_ancestors().exact_type(index_class)
+        if ancestors:
+            index = ancestors.first().specific
+        else:
+            index = self.get_parent().specific
+        return index
+
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context["index"] = self.get_parent().specific
+        context["index"] = self.get_index_page()
         context["prev"] = self.get_prev_siblings().live().first()
         context["next"] = self.get_next_siblings().live().first()
         context["currents"] = []

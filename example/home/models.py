@@ -15,5 +15,6 @@ class NewsIndex(BaseIndex):
 
 
 class News(Post):
+    index_page_class = NewsIndex
     parent_page_types = ["home.NewsIndex"]
     subpage_types = []

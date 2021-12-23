@@ -5,7 +5,7 @@
 {% block post_content_bottom %}
   <section class="block series-items-block py-3">
     {% for item in items %}
-      <a href="{% pageurl page %}" class="d-block mb-3">
+      <a href="{% pageurl item %}" class="d-block mb-3">
         <div class="page-item d-flex">
           <div class="me-3">
             {% image item.thumbnail fill-185x105 as thumbnail %}

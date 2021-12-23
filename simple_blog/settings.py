@@ -22,16 +22,16 @@ SIMPLE_BLOG_DEFAULTS: Dict[str, Any] = {
         "TAG": "simple_blog/tag.html",
         "CATEGORY": "simple_blog/category.html",
     },
-    "ITEMS_PER_PAGE": 12,
-    "SEARCH_ITEMS_PER_PAGE": 12,
+    "ITEMS_PER_PAGE": int(os.getenv("ITEMS_PER_PAGE", 12)),
+    "SEARCH_ITEMS_PER_PAGE": int(os.getenv("SEARCH_ITEMS_PER_PAGE", 12)),
     "INDEX_SUBPAGE_TYPES": ["simple_blog.Article"],
     "INDEX_PARENTPAGE_TYPES": None,
     "POST_PARENTPAGE_TYPES": ["simple_blog.Index"],
     "POST_SUBPAGE_TYPES": [],
     "ARTICLE_PARENTPAGE_TYPES": ["simple_blog.Index"],
     "ARTICLE_SUBPAGE_TYPES": [],
-    "PAGE_CACHE_TIMEOUT": int(os.getenv("PAGE_CACHE_TIMEOUT", 0)),
-    "DISQUS_ACCOUNT": None,
+    "PAGE_CACHE_TIMEOUT": int(os.getenv("PAGE_CACHE_TIMEOUT", 60)),
+    "DISQUS_ACCOUNT": os.getenv("DISQUS_ACCOUNT", None),
 }
 
 # List of settings that may be in string import notation.

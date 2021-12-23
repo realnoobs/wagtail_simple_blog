@@ -30,7 +30,7 @@ SIMPLE_BLOG_DEFAULTS: Dict[str, Any] = {
     "SUBPAGE_TYPES": ["simple_blog.Article", "simple_blog.Series"],
     "PARENTPAGE_TYPES": None,
     "EXTRA_STREAMFIELDS": [],
-    "PAGE_CACHE_TIMEOUT": os.getenv("PAGE_CACHE_TIMEOUT", 60),
+    "PAGE_CACHE_TIMEOUT": int(os.getenv("PAGE_CACHE_TIMEOUT", 60)),
     "DISQUS_ACCOUNT": None,
 }
 

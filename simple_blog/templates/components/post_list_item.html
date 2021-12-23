@@ -1,6 +1,6 @@
 {% load simpleblog_tags wagtailcore_tags %}
 
-<a href="{% pageurl post %}" class="d-block mb-3">
+<a href="{% pageurl post %}" class="d-block link-dark mb-2 {{ classnames }}">
   <div class="post-list-card border p-2 d-flex">
     {% if post.thumbnail %}
       <div class="me-3">

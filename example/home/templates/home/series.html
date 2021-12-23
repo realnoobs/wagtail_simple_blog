@@ -1,11 +1,7 @@
-{% extends "simple_blog/post.html" %}
-{% load static wagtailcore_tags wagtailimages_tags %}
-
+{% extends 'simple_blog/post.html' %}
 
 {% block post_content_bottom %}
-  <section class="block series-items-block mb-3">
-    {% for item in items %}
-      {% include 'components/post_list_item.html' with post=item %}
-    {% endfor %}
-  </section>
+  {% for post in items %}
+    {% include 'components/post_list_item.html' with post=post %}
+  {% endfor %}
 {% endblock %}

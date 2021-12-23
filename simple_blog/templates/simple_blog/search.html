@@ -31,7 +31,7 @@
     <div class="search-results search-promotion mb-3">
       <h2 class="search-promotion-title">{% trans "Recommended for You.." %}</h2>
       {% for search_promotion in search_promotions %}
-        {% include 'components/post_list_item.html' with post=search_promotion.page.specific %}
+        {% include 'components/post_list_item.html' with post=search_promotion.page.specific classnames="bg-soft" %}
       {% endfor %}
     </div>
   {% endif %}

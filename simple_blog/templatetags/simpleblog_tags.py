@@ -18,38 +18,68 @@ def nice_username(user):
     return user.get_full_name() or user.username
 
 
-@register.inclusion_tag("components/social_share.html", takes_context=True)
-def social_share_widget(context, object_title, object_or_url, title="Share this"):
-    return {
-        "title": title,
-        "object_title": object_title,
-        "object_or_url": object_or_url,
-    }
+@register.simple_tag(takes_context=True, name="social_share_widget")
+def social_share_widget(context, object_title, object_url, template_name=None, **kwargs):
+    title = kwargs.get("title", None) or _("Tags")
+    template = get_template(template_name or "components/tags_list.html")
+    kwargs.update(
+        {
+            "title": title,
+            "object_title": object_title,
+            "object_or_url": object_url,
+        }
+    )
+    return template.render(kwargs, context["request"])
 
 
-@register.inclusion_tag("components/tags_list.html", takes_context=True)
-def tags_list(context, index, number=20, **kwargs):
+@register.simple_tag(takes_context=True, name="tags_list")
+def tags_list(context, index, number=20, template_name=None, **kwargs):
     title = kwargs.get("title", None) or _("Tags")
     tags = Tag.objects.all()[:number]
-    return {
-        "title": title,
-        "request": context["request"],
-        "index": index,
-        "tags": tags,
-    }
+    template = get_template(template_name or "components/tags_list.html")
+    kwargs.update(
+        {
+            "title": title,
+            "request": context["request"],
+            "index": index,
+            "tags": tags,
+        }
+    )
+    return template.render(kwargs, context["request"])
 
 
-@register.inclusion_tag("components/categories_list.html", takes_context=True)
-def categories_list(context, index, number=20, **kwargs):
+@register.simple_tag(takes_context=True, name="categories_list")
+def categories_list(context, index, number=20, template_name=None, **kwargs):
     title = kwargs.get("title", None) or _("Categories")
     categories = Category.objects.all()[:number]
-    return {
-        "title": title,
-        "request": context["request"],
-        "index": index,
-        "currents": context["currents"],
-        "categories": categories,
-    }
+    template = get_template(template_name or "components/categories_list.html")
+    kwargs.update(
+        {
+            "title": title,
+            "index": index,
+            "request": context["request"],
+            "currents": context["currents"],
+            "categories": categories,
+        }
+    )
+    return template.render(kwargs, context["request"])
+
+
+@register.simple_tag(takes_context=True, name="posttypes_list")
+def posttypes_list(context, index, template_name=None, **kwargs):
+    title = kwargs.get("title", None) or _("Contents")
+    template = get_template(template_name or "components/post_type_list.html")
+    posttypes = [(slug, model.icon_class)for slug, model in index.get_subpages_map().items()]
+    kwargs.update(
+        {
+            "title": title,
+            "index": index,
+            "posttypes": posttypes,
+            "request": context["request"],
+            "currents": context["currents"],
+        }
+    )
+    return template.render(kwargs, context["request"])
 
 
 def render_posts_list(request, queryset, template_name, **kwargs):
@@ -182,15 +212,7 @@ def render_post(context, index, post):
 
 
 @register.simple_tag(takes_context=True, name="thumbnailer")
-def thumbnailer(
-    context,
-    img,
-    filter="fill",
-    width=370,
-    height=210,
-    output_var="thumbnail",
-    **kwargs
-):
+def thumbnailer(context, img, filter="fill", width=370, height=210, output_var="thumbnail", **kwargs):
     filter_spec = "%s-%sx%s" % (filter, width, height)
     return ImageNode(img, filter_spec, output_var=output_var, attrs=kwargs).render(context)
 

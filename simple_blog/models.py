@@ -1,5 +1,5 @@
 from django.db import models
-from django.http.response import Http404
+from django.apps import apps
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.core.validators import MaxValueValidator, MinLengthValidator, MinValueValidator
@@ -7,6 +7,7 @@ from django.core.paginator import InvalidPage, Paginator
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.translation import gettext_lazy as _
+from django.http.response import Http404
 from django.shortcuts import get_object_or_404, render
 
 from wagtail.core.models import Page
@@ -302,7 +303,6 @@ class BaseIndex(RoutablePageMixin, BasePage):
         validators=[MinValueValidator(2), MaxValueValidator(20)],
         help_text=_("Number of post shown in each page."),
     )
-    child_class = None
     paginator_class = Paginator
     paginate_query_param = "page"
     paginate_last_page_strings = ("last",)
@@ -314,17 +314,27 @@ class BaseIndex(RoutablePageMixin, BasePage):
     class Meta:
         abstract = True
 
+    def get_subpages_map(self):
+        maps = dict()
+        for pagemodel in self.subpage_types:
+            app_name, model = pagemodel.split(".")
+            maps[model.lower()] = apps.get_model(app_name, model)
+        return maps
+
     def get_template(self, *args, **kwargs):
         return super().get_template(*args, **kwargs)
 
-    def get_child_class(self):
-        if not self.child_class:
-            raise ImproperlyConfigured("%s need child class" % self.__class__.__name__)
-        return self.child_class
-
     def get_childs(self):
-        child_class = self.get_child_class()
-        return child_class.objects.descendant_of(self).order_by("-first_published_at").live()
+        return (
+            Post.objects.descendant_of(self)
+            .filter(
+                depth=self.depth + 1,
+                path__range=self._get_children_path_interval(self.path),
+            )
+            .order_by("-first_published_at")
+            .specific()
+            .live()
+        )
 
     def get_paginator_class(self):
         return self.paginator_class
@@ -373,6 +383,17 @@ class BaseIndex(RoutablePageMixin, BasePage):
         self.currents = [slug, "category"]
         return self.render(request, context_overrides={"category": category})
 
+    @route(r"^content/(?P<slug>[-\w]+)/$")
+    def posttype(self, request, slug, *args, **kwargs):
+        types = self.get_subpages_map()
+        PageModel = types.get(slug)
+        if not PageModel:
+            raise Http404("Post type %s doesn't exist" % slug)
+        queryset = self.get_childs().exact_type(PageModel)
+        self.posts = self.get_paginated_queryset(request, queryset)
+        self.currents = [slug, "posttype"]
+        return self.render(request)
+
     @route(r"^$")
     def index(self, request, *args, **kwargs):
         queryset = self.get_childs()
@@ -400,9 +421,10 @@ class Post(BasePage):
         help_text=_("Whether this page will appear featured posts list"),
     )
 
-    index_page_class = None
+    icon_class = "text-box-outline"
+    index_class = None
     template = blog_settings.TEMPLATES["POST"]
-    parent_page_types = blog_settings.POST_PARENTPAGES_TYPES
+    parent_page_types = blog_settings.POST_PARENTPAGE_TYPES
     subpage_types = blog_settings.POST_SUBPAGE_TYPES
 
     content_panels = BasePage.content_panels + [
@@ -424,12 +446,21 @@ class Post(BasePage):
     class Meta:
         ordering = ("-first_published_at",)
 
+    @classmethod
+    def check(cls, **kwargs):
+        # index class for Post subclass must be subclass of simple_blog.BaseIndex
+        if cls.index_class and not issubclass(cls.index_class, BaseIndex):
+            raise ImproperlyConfigured(
+                "%s index_class property must be simple_blog.BaseIndex subclass!" % cls.__name__
+            )
+        errors = super().check(**kwargs)
+        return errors
+
+    def get_index_class(self):
+        return self.index_class or Index
+
     def get_index_page(self):
-        ancestors = self.get_ancestors().exact_type(Index)
-        if ancestors:
-            index = ancestors.first().specific
-        else:
-            index = self.get_parent().specific
+        index = self.get_ancestors().exact_type(self.get_index_class()).first().specific
         return index
 
     def get_context(self, request, *args, **kwargs):
@@ -449,7 +480,7 @@ class Article(Post):
         help_text=_("Contents"),
     )
     template = blog_settings.TEMPLATES["ARTICLE"]
-    parent_page_types = blog_settings.ARTICLE_PARENTPAGES_TYPES
+    parent_page_types = blog_settings.ARTICLE_PARENTPAGE_TYPES
     subpage_types = blog_settings.ARTICLE_SUBPAGE_TYPES
 
     content_panels = Post.content_panels + [

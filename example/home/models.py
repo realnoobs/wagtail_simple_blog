@@ -1,31 +1,50 @@
 from django.utils.translation import gettext_lazy as _
-from simple_blog.models import BasePage
+from wagtail.admin.edit_handlers import StreamFieldPanel
+from wagtail.core.fields import StreamField
+from simple_blog.blocks import CodeBlock, OEmbedBlock, GistBlock, PageListBlock, RichtextBlock
+from simple_blog.models import BasePage, Post
 
 
-class HomePage(BasePage):
-    pass
+class Home(BasePage):
+    contents = StreamField(
+        [
+            ("richtext", RichtextBlock()),
+            ("choosen_pages", PageListBlock()),
+        ],
+        null=True,
+        blank=True,
+        help_text=_("Contents"),
+    )
+
+    template = "home/home.html"
+    content_panels = BasePage.content_panels + [
+        StreamFieldPanel("contents"),
+    ]
 
 
-# class Series(Post):
+class Series(Post):
+    contents = StreamField(
+        [
+            ("richtext", RichtextBlock()),
+            ("choosen_pages", PageListBlock()),
+            ("embed", OEmbedBlock()),
+            ("code", CodeBlock()),
+            ("gist", GistBlock()),
+        ],
+        null=True,
+        blank=True,
+        help_text=_("Contents"),
+    )
 
-#     template = "simple_blog/series.html"
-#     parent_page_types = ["simple_blog.Index"]
-#     subpage_types = ["simple_blog.Article"]
+    icon_class = "text-box-multiple-outline"
+    template = "home/series.html"
+    parent_page_types = ["simple_blog.Index"]
+    subpage_types = ["simple_blog.Article"]
+    content_panels = BasePage.content_panels + [
+        StreamFieldPanel("contents"),
+    ]
 
-#     def get_context(self, request, *args, **kwargs):
-#         context = super().get_context(request, *args, **kwargs)
-#         context["items"] = Post.objects.descendant_of(self).live()
-#         return context
-
-
-# class NewsIndex(BaseIndex):
-#     subpage_types = ["home.News"]
-
-#     class Meta:
-#         verbose_name = _("News")
-
-
-# class News(Post):
-#     index_page_class = NewsIndex
-#     parent_page_types = ["home.NewsIndex"]
-#     subpage_types = []
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context["items"] = Post.objects.descendant_of(self).live()
+        return context

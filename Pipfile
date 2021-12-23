@@ -7,6 +7,11 @@ name = "pypi"
 wagtail = "*"
 django-mptt = "*"
 django-social-share = "*"
+dj-database-url = "*"
+django-heroku = "*"
+django-storages = {extras = ["dropbox"], version = "*"}
+whitenoise = "*"
+sentry-sdk = "*"
 
 [dev-packages]
 flake8 = "*"

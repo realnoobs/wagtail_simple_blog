@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models.fields import BooleanField
 from django.http.response import Http404
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -130,18 +129,52 @@ class TaggedPost(TaggedItemBase):
 
 class BasePage(Page):
     thumbnail = models.ForeignKey(
-        "wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
     )
-    summary = RichTextField(null=True, blank=True, verbose_name=_("Summary"))
-    contents = StreamField(REGISTERED_BLOCKS, null=True, blank=True, help_text=_("Contents"))
+    summary = RichTextField(
+        null=True,
+        blank=True,
+        verbose_name=_("Summary"),
+    )
+    contents = StreamField(
+        REGISTERED_BLOCKS,
+        null=True,
+        blank=True,
+        help_text=_("Contents"),
+    )
 
-    custom_template = models.CharField(max_length=100, null=True, blank=True)
-    custom_styles = models.TextField(null=True, blank=True)
-    custom_scripts = models.TextField(null=True, blank=True)
+    custom_template = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+    )
+    custom_styles = models.TextField(
+        null=True,
+        blank=True,
+    )
+    custom_scripts = models.TextField(
+        null=True,
+        blank=True,
+    )
 
-    show_comments = models.BooleanField(default=True, help_text=_("Show all comments"))
-    allow_comments = models.BooleanField(default=True, help_text=_("Allow visitors to comments"))
-    view_count = models.IntegerField(default=0, editable=False)
+    show_comments = models.BooleanField(
+        default=True,
+        help_text=_(
+            "Show all comments",
+        ),
+    )
+    allow_comments = models.BooleanField(
+        default=True,
+        help_text=_("Allow visitors to comments"),
+    )
+    view_count = models.IntegerField(
+        default=0,
+        editable=False,
+    )
 
     content_panels = Page.content_panels + [
         ImageChooserPanel("thumbnail"),
@@ -281,7 +314,10 @@ class Post(BasePage):
         through="simple_blog.TaggedPost",
         blank=True,
     )
-    featured = BooleanField(default=False, help_text=_("Whether this page will appear featured posts list"))
+    featured = models.BooleanField(
+        default=False,
+        help_text=_("Whether this page will appear featured posts list"),
+    )
 
     template = blog_settings.TEMPLATES["POST"]
     card_type = "post"

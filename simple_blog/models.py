@@ -2,7 +2,7 @@ from django.db import models
 from django.http.response import Http404
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.core.validators import MinLengthValidator
+from django.core.validators import MaxValueValidator, MinLengthValidator, MinValueValidator
 from django.template.exceptions import TemplateDoesNotExist
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import get_template
@@ -374,12 +374,20 @@ class Series(Post):
 
 class BaseIndex(RoutablePageMixin, BasePage):
 
+    post_per_page = models.IntegerField(
+        default=4,
+        validators=[MinValueValidator(2), MaxValueValidator(20)],
+        help_text=_("Number of post shown in each page."),
+    )
     children_class = Post
     paginator_class = Paginator
     card_type = "article"
     paginate_query_param = "page"
     paginate_last_page_strings = ("last",)
-    paginate_by = blog_settings.ITEMS_PER_PAGE
+
+    settings_panels = BasePage.settings_panels + [
+        handlers.FieldPanel("post_per_page"),
+    ]
 
     class Meta:
         abstract = True
@@ -431,8 +439,12 @@ class BaseIndex(RoutablePageMixin, BasePage):
         self.currents = ["index"]
         return self.render(request)
 
+    def get_paginate_by(self):
+        return self.post_per_page
+
     def get_paginated_queryset(self, request, queryset):
-        paginator = self.paginator_class(queryset, per_page=self.paginate_by)
+        per_page = self.get_paginate_by()
+        paginator = self.paginator_class(queryset, per_page=per_page)
         page_number = self.get_page_number(request, paginator)
         try:
             page_object = paginator.page(page_number)
@@ -448,5 +460,4 @@ class BaseIndex(RoutablePageMixin, BasePage):
 
 
 class Blog(BaseIndex):
-    paginate_by = blog_settings.BLOG_ITEMS_PER_PAGE
     subpage_types = blog_settings.SUBPAGE_TYPES

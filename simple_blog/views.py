@@ -1,8 +1,9 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.template.response import TemplateResponse
 
-from wagtail.core.models import Page
 from wagtail.search.models import Query
+
+from simple_blog.models import Post
 from .settings import simple_blog_settings as blog_settings
 
 
@@ -12,13 +13,13 @@ def search(request):
 
     # Search
     if search_query:
-        search_results = Page.objects.live().search(search_query)
+        search_results = Post.objects.live().search(search_query)
         query = Query.get(search_query)
 
         # Record hit
         query.add_hit()
     else:
-        search_results = Page.objects.none()
+        search_results = Post.objects.none()
 
     # Pagination
     paginator = Paginator(search_results, per_page=blog_settings.SEARCH_ITEMS_PER_PAGE)
@@ -31,6 +32,6 @@ def search(request):
 
     return TemplateResponse(
         request,
-        blog_settings.TEMPLATES['SEARCH'],
+        blog_settings.TEMPLATES["SEARCH"],
         {"search_query": search_query, "search_results": search_results, "currents": ["search"]},
     )

@@ -20,7 +20,7 @@
     <p class="fw-ligter">{% trans "Search Article, Series, Video Tutorial or Download Stuff" %}</p>
   </div>
 
-  <form action="{% url 'search' %}" method="get">
+  <form class="mb-4" action="{% url 'search' %}" method="get">
     <div class="input-group mb-3">
       <input type="text" name="query"{% if search_query %} value="{{ search_query }}"{% endif %} class="form-control" placeholder="Search something ..." aria-label="Search query">
       <button class="btn btn-outline-primary" type="submit">{% trans "Search Now" %}</button>
@@ -28,29 +28,18 @@
   </form>
 
   {% if search_promotions %}
-    <div class="search-results search-promotion">
+    <div class="search-results search-promotion mb-3">
       <h2 class="search-promotion-title">{% trans "Recommended for You.." %}</h2>
       {% for search_promotion in search_promotions %}
-        <article class="search-promotion-post">
-          <h4 class="search-post-title"><a href="{% pageurl search_promotion.page %}">{{ search_promotion.page.title }}</a></h4>
-          {% if search_promotion.description %}
-            <div class="search-post-description">{{ search_promotion.description }}</div>
-          {% endif %}
-        </article>
+        {% include 'components/post_list_item.html' with post=search_promotion.page.specific %}
       {% endfor %}
     </div>
   {% endif %}
 
   {% if search_results %}
     <div class="search-results">
-      {% for result in search_results %}
-        <article class="search-post">
-          <a href="{% pageurl result %}"><h4 class="search-post-title">{{ result }}</h4></a>
-          {% if result.search_description %}
-            <div class="search-post-description">{{ result.search_description }}</div>
-          {% endif %}
-          <div class="search-post-meta">{{ result.first_published_at }}</div>
-        </article>
+      {% for result in search_results.object_list %}
+        {% include 'components/post_list_item.html' with post=result.specific %}
       {% endfor %}
       </div>
     {% include 'components/pagination.html' with page_object=search_results %}
@@ -63,7 +52,6 @@
 {% endblock %}
 
 {% block sidebar_body %}
-  {{ block.super }}
   {% popular_posts title="Popular Posts" %}
   {% featured_posts title="Featured Posts" %}
 {% endblock sidebar_body %}

@@ -1,7 +1,13 @@
-from simple_blog.models import Category, Post, Tag
+from django import template
 from django.template import Library
 from django.template.loader import get_template, select_template
 from django.utils.translation import gettext_lazy as _
+from django.utils.functional import cached_property
+
+from wagtail.images.models import Filter
+from wagtail.images.shortcuts import get_rendition_or_not_found
+
+from simple_blog.models import Category, Post, Tag
 from simple_blog.utils import get_gravatar_url
 
 register = Library()
@@ -85,35 +91,44 @@ def related_posts_by_tags(context, index, post, limit=5, template_name=None, **k
 
 
 @register.simple_tag(takes_context=True, name="recent_posts")
-def recent_posts(context, index, limit=5, template_name=None, **kwargs):
+def recent_posts(context, index=None, limit=5, template_name=None, **kwargs):
     request = context["request"]
     title = kwargs.get("title", None)
     if not title:
         kwargs["title"] = _("Recent %s") % index.opts.verbose_name
     template = template_name or "components/post_list.html"
-    queryset = Post.objects.descendant_of(index).order_by("-first_published_at").live()[:limit]
+    queryset = Post.objects
+    if index:
+        queryset = queryset.descendant_of(index)
+    queryset = queryset.order_by("-first_published_at").live()[:limit]
     return render_posts_list(request, queryset, template, **kwargs)
 
 
 @register.simple_tag(takes_context=True, name="popular_posts")
-def popular_posts(context, index, limit=5, template_name=None, **kwargs):
+def popular_posts(context, index=None, limit=5, template_name=None, **kwargs):
     request = context["request"]
     title = kwargs.get("title", None)
     if not title:
         kwargs["title"] = _("Popular %s") % index.opts.verbose_name
     template = template_name or "components/post_list.html"
-    queryset = Post.objects.descendant_of(index).order_by("-view_count").live()[:limit]
+    queryset = Post.objects
+    if index:
+        queryset = queryset.descendant_of(index)
+    queryset = queryset.order_by("-view_count").live()[:limit]
     return render_posts_list(request, queryset, template, **kwargs)
 
 
 @register.simple_tag(takes_context=True, name="featured_posts")
-def featured_posts(context, index, limit=5, template_name=None, **kwargs):
+def featured_posts(context, index=None, limit=5, template_name=None, **kwargs):
     request = context["request"]
     title = kwargs.get("title", None)
     if not title:
         kwargs["title"] = _("Featured %s") % index.opts.verbose_name
     template = template_name or "components/post_list.html"
-    queryset = Post.objects.descendant_of(index).filter(featured=True).live()[:limit]
+    queryset = Post.objects
+    if index:
+        queryset = queryset.descendant_of(index)
+    queryset = queryset.filter(featured=True).live()[:limit]
     return render_posts_list(request, queryset, template, **kwargs)
 
 
@@ -164,3 +179,48 @@ def render_post(context, blog, post):
         ]
     )
     return template.render({"blog": blog, "post": post, "request": request}, request)
+
+
+@register.simple_tag(takes_context=True, name="thumbnailer")
+def thumbnailer(
+    context,
+    img,
+    filter="fill",
+    width=370,
+    height=210,
+    output_var="thumbnail",
+    **kwargs
+):
+    filter_spec = "%s-%sx%s" % (filter, width, height)
+    return ImageNode(img, filter_spec, output_var=output_var, attrs=kwargs).render(context)
+
+
+class ImageNode(template.Node):
+    def __init__(self, img, filter_spec, output_var, attrs={}):
+        self.image = img
+        self.output_var = output_var
+        self.attrs = attrs
+        self.filter_spec = filter_spec
+
+    @cached_property
+    def filter(self):
+        return Filter(spec=self.filter_spec)
+
+    def render(self, context):
+        image = self.image
+
+        if not hasattr(image, "get_rendition"):
+            raise ValueError("image tag expected an Image object, got %r" % image)
+
+        rendition = get_rendition_or_not_found(image, self.filter)
+
+        if self.output_var:
+            # return the rendition object in the given variable
+            context[self.output_var] = rendition
+            return ""
+        else:
+            # render the rendition's image tag now
+            resolved_attrs = {}
+            for key in self.attrs:
+                resolved_attrs[key] = self.attrs[key].resolve(context)
+            return rendition.img_tag(resolved_attrs)

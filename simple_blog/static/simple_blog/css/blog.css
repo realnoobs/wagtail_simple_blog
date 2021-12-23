@@ -84,7 +84,6 @@ a {
 .post .post-summary {
   padding: 1.5rem;
   background: #fbfbfb;
-  margin-bottom: 1.5rem;
 }
 
 .post .code-body {
@@ -177,7 +176,11 @@ a {
 
 .pagelist-block .page-item:hover,
 .series-items-block .page-item:hover {
-  background-color: #fafafa ;
+  background-color: #dedede ;
+}
+
+.post-list-card:hover {
+  background: #fafafa;
 }
 
 /* SIDEBAR WIDGETS */

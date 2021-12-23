@@ -31,21 +31,21 @@
     </div>
     {% endblock post_meta %}
 
-
-    {% block post_thumbnail %}
-      {% if page.thumbnail %}
-        <div class="post-thumbnail">
-          {% image page.thumbnail fill-695x388 as thumbnail %}
-          <img src="{{ thumbnail.url }}" class="img-fluid" alt="header_image">
-        </div>
-      {% endif %}
-    {% endblock post_thumbnail %}
-
-    {% block post_summary %}
-      {% if page.summary %}
-        <div class="post-summary richtext-no-p">{{ page.summary|richtext }}</div>
-      {% endif %}
-    {% endblock post_summary %}
+    <div class="mb-4">
+      {% block post_thumbnail %}
+        {% if page.thumbnail %}
+          <div class="post-thumbnail">
+            {% image page.thumbnail fill-695x388 as thumbnail %}
+            <img src="{{ thumbnail.url }}" class="img-fluid" alt="header_image">
+          </div>
+        {% endif %}
+      {% endblock post_thumbnail %}
+      {% block post_summary %}
+        {% if page.summary %}
+          <div class="post-summary richtext-no-p">{{ page.summary|richtext }}</div>
+        {% endif %}
+      {% endblock post_summary %}
+    </div>
     
     {% block post_content_top %}{% endblock %}
     

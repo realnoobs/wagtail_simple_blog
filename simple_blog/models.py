@@ -3,16 +3,16 @@ from django.http.response import Http404
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinLengthValidator, MinValueValidator
-from django.template.exceptions import TemplateDoesNotExist
-from django.utils.translation import gettext_lazy as _
-from django.template.loader import get_template
-from django.shortcuts import get_object_or_404, render
 from django.core.paginator import InvalidPage, Paginator
+from django.template.exceptions import TemplateDoesNotExist
+from django.template.loader import get_template
+from django.utils.translation import gettext_lazy as _
+from django.shortcuts import get_object_or_404, render
 
-from wagtail.core.models import Page
-from wagtail.snippets.models import register_snippet
 from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.models import Page
 from wagtail.admin import edit_handlers as handlers
+from wagtail.snippets.models import register_snippet
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 

@@ -1,9 +1,8 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.core.models import Page
-from simple_blog.models import BaseIndex, Post
+from simple_blog.models import BasePage, BaseIndex, Post
 
 
-class HomePage(Page):
+class HomePage(BasePage):
     pass
 
 

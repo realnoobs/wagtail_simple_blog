@@ -136,6 +136,7 @@ class OEmbedBlock(StructBlock):
 class ImageBlock(StructBlock):
     image = ImageChooserBlock()
     caption = CharBlock(required=False)
+    classnames = CharBlock(required=False)
 
     class Meta:
         icon = "image"
@@ -143,6 +144,10 @@ class ImageBlock(StructBlock):
 
 
 class ImageGalleryBlock(StructBlock):
+
+    title = CharBlock(required=False)
+    width = IntegerBlock(required=True, default=185)
+    height = IntegerBlock(required=True, default=105)
     classnames = CharBlock(required=False)
     images = ListBlock(ImageBlock())
 
@@ -209,7 +214,7 @@ class PageListBlock(StructBlock):
             PageListBlock.LIST: "streamblocks/pagelist_block.html",
             PageListBlock.CARD: "streamblocks/pagecard_block.html",
         }
-        return templates_map[value['style']]
+        return templates_map[value["style"]]
 
     def render(self, value, context=None):
         template = self.get_template(value, context=context)

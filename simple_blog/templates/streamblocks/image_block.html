@@ -1,3 +1,5 @@
-{% load wagtailimages_tags %}
-{% image value.image fill-200x200 as thumbnail %}
-<a href="{{ value.image.file.url }}" class="d-block m-2"><img src="{{ thumbnail.url }}" alt="gallery-item"></a>
+{% load simpleblog_tags %}
+{% thumbnailer value.image filter="fill" width=width height=height %}
+<a class="d-block" href="{{ value.image.file.url }}">
+  <img src="{{ thumbnail.url }}" class="img-fluid" alt="gallery-item">
+</a>

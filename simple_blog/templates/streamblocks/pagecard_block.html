@@ -1,7 +1,7 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 <section class="block pagelist-block">
-  <h3 class="h5">{{ value.title }}</h3>
+  <h3 class="title mb-3">{{ value.title }}</h3>
   <div class="row row-cols-2 row-cols-md-{{ value.columns }} g-3">
     {% for page in value.pages %}
       <a href="{% pageurl page %}">

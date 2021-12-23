@@ -9,22 +9,22 @@
     <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/blog.css' %}"> 
   {% endblock %}
 
-  <link defer rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/github.min.css' %}">
-  <link defer rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/lightgallery.min.css' %}">
-  <link defer rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/lightgallery-transitions.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/github.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/lightgallery.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'simple_blog/css/lightgallery-transitions.min.css' %}">
 {% endblock extra_css %}
 
 {% block extra_js %}
   {{ block.super }}
   
   {% block bootstrap_theme_js %}
-    <script type="text/javascript" src="{% static 'simple_blog/js/bootstrap.min.js' %}"></script>
+    <script defer type="text/javascript" src="{% static 'simple_blog/js/bootstrap.min.js' %}"></script>
   {% endblock %}
 
-  <script type="text/javascript" src="{% static 'simple_blog/js/plugins/mermaid.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'simple_blog/js/plugins/highlight.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'simple_blog/js/plugins/gist.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'simple_blog/js/plugins/lightgallery.min.js' %}"></script>
+  <script defer type="text/javascript" src="{% static 'simple_blog/js/plugins/mermaid.min.js' %}"></script>
+  <script defer type="text/javascript" src="{% static 'simple_blog/js/plugins/highlight.min.js' %}"></script>
+  <script defer type="text/javascript" src="{% static 'simple_blog/js/plugins/gist.min.js' %}"></script>
+  <script defer type="text/javascript" src="{% static 'simple_blog/js/plugins/lightgallery.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'simple_blog/js/blog.js' %}"></script>
   
 {% endblock extra_js %}

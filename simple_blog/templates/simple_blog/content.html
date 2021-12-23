@@ -9,7 +9,7 @@
       <div class="post-meta">
         {% if post.tags.count %}
           {% for tag in post.tags.all %}
-            <a class="badge bg-secondary link-primary" href="{% routablepageurl blog "post_by_tag" tag.slug %}">{{ tag }}</a>
+            <a class="badge bg-secondary link-primary" href="{% routablepageurl index "tagged_posts" tag.slug %}">{{ tag }}</a>
           {% endfor %}
         {% endif %}
       </div>
@@ -21,7 +21,7 @@
       <div>
         <span>{{ post.opts.verbose_name|title }}</span>
         {% if post.category %}
-          {% trans "in" %} <a href="{% routablepageurl blog "post_by_category" post.category.slug %}">
+          {% trans "in" %} <a href="{% routablepageurl index "categorized_posts" post.category.slug %}">
             <span>{{ post.category|title }}</span>
           </a>
         {% endif %}

@@ -18,7 +18,6 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
 from wagtail.embeds.blocks import EmbedBlock
-from .settings import simple_blog_settings as blog_settings
 
 
 table_options = {
@@ -241,4 +240,4 @@ REGISTERED_BLOCKS = [
     ("image_gallery", ImageGalleryBlock()),
     ("table", CustomTableBlock(table_options=table_options)),
     ("table_typed", typed_table),
-] + blog_settings.EXTRA_STREAMFIELDS
+]

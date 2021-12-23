@@ -64,7 +64,7 @@ def related_posts_by_category(context, index, post, limit=5, template_name=None,
     template = template_name or "components/post_list.html"
     title = kwargs.get("title", None)
     if not title:
-        kwargs["title"] = _("Related %s") % index.opts.verbose_name
+        kwargs["title"] = _("Related %s") % index.child_class._meta.verbose_name
     category = getattr(post, "category", None)
     queryset = []
     if category:
@@ -83,7 +83,7 @@ def related_posts_by_tags(context, index, post, limit=5, template_name=None, **k
     request = context["request"]
     title = kwargs.get("title", None)
     if not title:
-        kwargs["title"] = _("Related %s") % index.opts.verbose_name
+        kwargs["title"] = _("Related %s") % index.child_class._meta.verbose_name
     template = template_name or "components/post_list.html"
     tags = [t.id for t in post.tags.all()]
     queryset = Post.objects.descendant_of(index).filter(tags__id__in=tags).exclude(id=post.id).live()[:limit]
@@ -95,7 +95,7 @@ def recent_posts(context, index=None, limit=5, template_name=None, **kwargs):
     request = context["request"]
     title = kwargs.get("title", None)
     if not title:
-        kwargs["title"] = _("Recent %s") % index.opts.verbose_name
+        kwargs["title"] = _("Recent %s") % index.child_class._meta.verbose_name
     template = template_name or "components/post_list.html"
     queryset = Post.objects
     if index:
@@ -109,7 +109,7 @@ def popular_posts(context, index=None, limit=5, template_name=None, **kwargs):
     request = context["request"]
     title = kwargs.get("title", None)
     if not title:
-        kwargs["title"] = _("Popular %s") % index.opts.verbose_name
+        kwargs["title"] = _("Popular %s") % index.child_class._meta.verbose_name
     template = template_name or "components/post_list.html"
     queryset = Post.objects
     if index:
@@ -123,7 +123,7 @@ def featured_posts(context, index=None, limit=5, template_name=None, **kwargs):
     request = context["request"]
     title = kwargs.get("title", None)
     if not title:
-        kwargs["title"] = _("Featured %s") % index.opts.verbose_name
+        kwargs["title"] = _("Featured %s") % index.child_class._meta.verbose_name
     template = template_name or "components/post_list.html"
     queryset = Post.objects
     if index:
@@ -170,7 +170,7 @@ def replace_param(context, **kwargs):
 
 
 @register.simple_tag(takes_context=True, name="render_post")
-def render_post(context, blog, post):
+def render_post(context, index, post):
     request = context["request"]
     template = select_template(
         [
@@ -178,7 +178,7 @@ def render_post(context, blog, post):
             "simple_blog/content.html",
         ]
     )
-    return template.render({"blog": blog, "post": post, "request": request}, request)
+    return template.render({"index": index, "post": post, "request": request}, request)
 
 
 @register.simple_tag(takes_context=True, name="thumbnailer")

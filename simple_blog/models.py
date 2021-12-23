@@ -1,7 +1,7 @@
 from django.db import models
 from django.http.response import Http404
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.core.validators import MaxValueValidator, MinLengthValidator, MinValueValidator
 from django.core.paginator import InvalidPage, Paginator
 from django.template.exceptions import TemplateDoesNotExist
@@ -9,8 +9,8 @@ from django.template.loader import get_template
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404, render
 
-from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
+from wagtail.core.fields import RichTextField, StreamField
 from wagtail.admin import edit_handlers as handlers
 from wagtail.snippets.models import register_snippet
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -140,12 +140,6 @@ class BasePage(Page):
         blank=True,
         verbose_name=_("Summary"),
     )
-    contents = StreamField(
-        REGISTERED_BLOCKS,
-        null=True,
-        blank=True,
-        help_text=_("Contents"),
-    )
 
     custom_template = models.CharField(
         max_length=100,
@@ -179,7 +173,6 @@ class BasePage(Page):
     content_panels = Page.content_panels + [
         ImageChooserPanel("thumbnail"),
         handlers.FieldPanel("summary"),
-        handlers.StreamFieldPanel("contents"),
     ]
     promote_panels = Page.promote_panels
     design_panels = [
@@ -196,6 +189,8 @@ class BasePage(Page):
             _("Comments"),
         ),
     ]
+
+    card_type = "article"
 
     class Meta:
         abstract = True
@@ -300,91 +295,6 @@ class BasePage(Page):
         return resp
 
 
-class Post(BasePage):
-    category = models.ForeignKey(
-        Category,
-        related_name="posts",
-        verbose_name=_("category"),
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-    tags = ClusterTaggableManager(
-        verbose_name=_("tags"),
-        through="simple_blog.TaggedPost",
-        blank=True,
-    )
-    featured = models.BooleanField(
-        default=False,
-        help_text=_("Whether this page will appear featured posts list"),
-    )
-
-    template = blog_settings.TEMPLATES["POST"]
-    card_type = "post"
-    index_page_class = None
-    parent_page_types = ["simple_blog.Blog"]
-    subpage_types = []
-
-    content_panels = BasePage.content_panels + [
-        handlers.MultiFieldPanel(
-            [
-                handlers.FieldPanel("tags"),
-                handlers.FieldPanel("category"),
-            ],
-            _("Category & Tags"),
-        ),
-    ]
-    promote_panels = Page.promote_panels + [
-        handlers.MultiFieldPanel(
-            children=[handlers.FieldPanel("featured")],
-            heading=_("Others "),
-        )
-    ]
-
-    class Meta:
-        ordering = ("-first_published_at",)
-
-    def get_index_page_class(self):
-        return self.index_page_class or Blog
-
-    def get_index_page(self):
-        index_class = self.get_index_page_class()
-        ancestors = self.get_ancestors().exact_type(index_class)
-        if ancestors:
-            index = ancestors.first().specific
-        else:
-            index = self.get_parent().specific
-        return index
-
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request, *args, **kwargs)
-        context["index"] = self.get_index_page()
-        context["prev"] = self.get_prev_siblings().live().first()
-        context["next"] = self.get_next_siblings().live().first()
-        context["currents"] = []
-        return context
-
-
-class Article(Post):
-
-    template = blog_settings.TEMPLATES["ARTICLE"]
-    card_type = "article"
-    parent_page_types = ["simple_blog.Blog", "simple_blog.Series"]
-    subpage_types = []
-
-
-class Series(Post):
-
-    template = blog_settings.TEMPLATES["SERIES"]
-    parent_page_types = ["simple_blog.Blog"]
-    subpage_types = ["simple_blog.Article"]
-
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request, *args, **kwargs)
-        context["items"] = Post.objects.descendant_of(self).live()
-        return context
-
-
 class BaseIndex(RoutablePageMixin, BasePage):
 
     post_per_page = models.IntegerField(
@@ -392,9 +302,8 @@ class BaseIndex(RoutablePageMixin, BasePage):
         validators=[MinValueValidator(2), MaxValueValidator(20)],
         help_text=_("Number of post shown in each page."),
     )
-    children_class = Post
+    child_class = None
     paginator_class = Paginator
-    card_type = "article"
     paginate_query_param = "page"
     paginate_last_page_strings = ("last",)
 
@@ -405,52 +314,20 @@ class BaseIndex(RoutablePageMixin, BasePage):
     class Meta:
         abstract = True
 
-    def get_children_class(self):
-        return self.children_class
-
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request, *args, **kwargs)
-        context["index"] = self
-        context["posts"] = self.posts
-        context["currents"] = self.currents
-        return context
-
     def get_template(self, *args, **kwargs):
         return super().get_template(*args, **kwargs)
 
-    def get_posts(self):
-        return Post.objects.descendant_of(self).order_by("-first_published_at").live()
+    def get_child_class(self):
+        if not self.child_class:
+            raise ImproperlyConfigured("%s need child class" % self.__class__.__name__)
+        return self.child_class
 
-    @route(r"^tag/(?P<tag>[-\w]+)/$")
-    def post_by_tag(self, request, tag, *args, **kwargs):
-        queryset = self.get_posts().filter(tags__slug=tag)
-        self.posts = self.get_paginated_queryset(request, queryset)
-        self.currents = [tag, "tag"]
-        self.template = blog_settings.TEMPLATES["TAG"]
-        return self.render(request, context_overrides={"tag": tag})
+    def get_childs(self):
+        child_class = self.get_child_class()
+        return child_class.objects.descendant_of(self).order_by("-first_published_at").live()
 
-    @route(r"^category/(?P<category>[-\w]+)/$")
-    def post_by_category(self, request, category, *args, **kwargs):
-        category_obj = get_object_or_404(Category, slug=category)
-        cat_ids = [cat.id for cat in category_obj.get_descendants(include_self=True)]
-        queryset = self.get_posts().filter(category_id__in=cat_ids)
-        self.template = blog_settings.TEMPLATES["CATEGORY"]
-        self.posts = self.get_paginated_queryset(request, queryset)
-        self.currents = [category, "category"]
-        return self.render(
-            request,
-            context_overrides={
-                "category": category,
-                "category_object": category_obj,
-            },
-        )
-
-    @route(r"^$")
-    def post_list(self, request, *args, **kwargs):
-        queryset = self.get_posts()
-        self.posts = self.get_paginated_queryset(request, queryset)
-        self.currents = ["index"]
-        return self.render(request)
+    def get_paginator_class(self):
+        return self.paginator_class
 
     def get_paginate_by(self):
         return self.post_per_page
@@ -471,6 +348,132 @@ class BaseIndex(RoutablePageMixin, BasePage):
             page_number = paginator.num_pages
         return page_number
 
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context["index"] = self
+        context["posts"] = self.posts
+        context["currents"] = self.currents
+        return context
 
-class Blog(BaseIndex):
-    subpage_types = blog_settings.SUBPAGE_TYPES
+    @route(r"^tag/(?P<slug>[-\w]+)/$")
+    def tagged_posts(self, request, slug, *args, **kwargs):
+        queryset = self.get_childs().filter(tags__slug=slug)
+        self.posts = self.get_paginated_queryset(request, queryset)
+        self.currents = [slug, "tag"]
+        self.template = blog_settings.TEMPLATES["TAG"]
+        return self.render(request, context_overrides={"tag": slug})
+
+    @route(r"^category/(?P<slug>[-\w]+)/$")
+    def categorized_posts(self, request, slug, *args, **kwargs):
+        category = get_object_or_404(Category, slug=slug)
+        cat_ids = [cat.id for cat in category.get_descendants(include_self=True)]
+        queryset = self.get_childs().filter(category_id__in=cat_ids)
+        self.template = blog_settings.TEMPLATES["CATEGORY"]
+        self.posts = self.get_paginated_queryset(request, queryset)
+        self.currents = [slug, "category"]
+        return self.render(request, context_overrides={"category": category})
+
+    @route(r"^$")
+    def index(self, request, *args, **kwargs):
+        queryset = self.get_childs()
+        self.posts = self.get_paginated_queryset(request, queryset)
+        self.currents = ["index"]
+        return self.render(request)
+
+
+class Post(BasePage):
+    category = models.ForeignKey(
+        Category,
+        related_name="posts",
+        verbose_name=_("category"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    tags = ClusterTaggableManager(
+        verbose_name=_("tags"),
+        through="simple_blog.TaggedPost",
+        blank=True,
+    )
+    featured = models.BooleanField(
+        default=False,
+        help_text=_("Whether this page will appear featured posts list"),
+    )
+
+    index_page_class = None
+    template = blog_settings.TEMPLATES["POST"]
+    parent_page_types = blog_settings.POST_PARENTPAGES_TYPES
+    subpage_types = blog_settings.POST_SUBPAGE_TYPES
+
+    content_panels = BasePage.content_panels + [
+        handlers.MultiFieldPanel(
+            [
+                handlers.FieldPanel("tags"),
+                handlers.FieldPanel("category"),
+            ],
+            _("Category & Tags"),
+        ),
+    ]
+    promote_panels = Page.promote_panels + [
+        handlers.MultiFieldPanel(
+            children=[handlers.FieldPanel("featured")],
+            heading=_("Others "),
+        )
+    ]
+
+    class Meta:
+        ordering = ("-first_published_at",)
+
+    def get_index_page(self):
+        ancestors = self.get_ancestors().exact_type(Index)
+        if ancestors:
+            index = ancestors.first().specific
+        else:
+            index = self.get_parent().specific
+        return index
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context["index"] = self.get_index_page()
+        context["prev"] = self.get_prev_siblings().live().first()
+        context["next"] = self.get_next_siblings().live().first()
+        context["currents"] = []
+        return context
+
+
+class Article(Post):
+    contents = StreamField(
+        REGISTERED_BLOCKS,
+        null=True,
+        blank=True,
+        help_text=_("Contents"),
+    )
+    template = blog_settings.TEMPLATES["ARTICLE"]
+    parent_page_types = blog_settings.ARTICLE_PARENTPAGES_TYPES
+    subpage_types = blog_settings.ARTICLE_SUBPAGE_TYPES
+
+    content_panels = Post.content_panels + [
+        handlers.StreamFieldPanel("contents"),
+    ]
+
+
+class Index(BaseIndex):
+
+    contents = StreamField(
+        REGISTERED_BLOCKS,
+        null=True,
+        blank=True,
+        help_text=_("Contents"),
+    )
+
+    child_class = Post
+    template = blog_settings.TEMPLATES["INDEX"]
+    parent_page_types = blog_settings.INDEX_PARENTPAGE_TYPES
+    subpage_types = blog_settings.INDEX_SUBPAGE_TYPES
+
+    content_panels = BasePage.content_panels + [
+        handlers.StreamFieldPanel("contents"),
+    ]
+
+    class Meta:
+        verbose_name = _("Index")

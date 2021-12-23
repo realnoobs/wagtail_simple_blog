@@ -16,7 +16,7 @@
       <span>{{ page.opts.verbose_name|title }}</span>
       <span>{{ page.first_published_at|date:"d M Y" }}</span>
       {% if page.category %}
-        <a href="{% routablepageurl index "post_by_category" page.category.slug %}">
+        <a href="{% routablepageurl index "categorized_posts" page.category.slug %}">
           <span><i class="mdi mdi-tag"></i> {{ page.category|title }}</span>
         </a>
       {% endif %}
@@ -24,7 +24,7 @@
       <span>
         {% if page.tags.count %}
           {% for tag in page.tags.all %}
-            <a class="d-inline-block badge bg-soft link-primary" href="{% routablepageurl index "post_by_tag" tag.slug %}">{{ tag }}</a>
+            <a class="d-inline-block badge bg-soft link-primary" href="{% routablepageurl index "tagged_posts" tag.slug %}">{{ tag }}</a>
           {% endfor %}
         {% endif %}
       </span>

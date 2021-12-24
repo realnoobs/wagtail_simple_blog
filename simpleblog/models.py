@@ -265,7 +265,7 @@ class BasePage(Page):
         """Handle page view count using cache"""
         # get ip from request
         ip_address = get_ip(self.request)
-        cache_key = "%s:Page:%s" % (ip_address, self.id)
+        cache_key = "%s:%s:%s" % (ip_address, self.specific.__class__, self.id)
         cache_timeout = 60 * 60 * 24
         visitor = cache.get(cache_key)
         if not visitor:
@@ -274,26 +274,32 @@ class BasePage(Page):
             cache.set(cache_key, ip_address, cache_timeout)
 
     def serve(self, request, *args, **kwargs):
-        """Enhanced  page.serve() with caching"""
         self.request = request
-        cache_key = self.get_cache_key(request)
-        cache_timeout = self.get_cache_timeout()
-        self.request.is_preview = getattr(self.request, "is_preview", False)
-
-        # get fresh response for preview
-        if self.request.is_preview:
-            return self.get_response(self.request, *args, **kwargs)
-
-        # get from cache first
-        resp = cache.get(cache_key)
-        if not resp:
-            resp = self.get_response(self.request, *args, **kwargs)
-            cache.set(cache_key, resp, cache_timeout)
-
-        # Update View Count by request
+        self.request.is_preview = getattr(request, 'is_preview', False)
         self.handle_view_count()
+        return self.get_response(self.request, *args, **kwargs)
 
-        return resp
+    # def serve(self, request, *args, **kwargs):
+    #     """Enhanced  page.serve() with caching"""
+    #     self.request = request
+    #     cache_key = self.get_cache_key(request)
+    #     cache_timeout = self.get_cache_timeout()
+    #     self.request.is_preview = getattr(self.request, "is_preview", False)
+
+    #     # get fresh response for preview
+    #     if self.request.is_preview:
+    #         return self.get_response(self.request, *args, **kwargs)
+
+    #     # get from cache first
+    #     resp = cache.get(cache_key)
+    #     if not resp:
+    #         resp = self.get_response(self.request, *args, **kwargs)
+    #         cache.set(cache_key, resp, cache_timeout)
+
+    #     # Update View Count by request
+    #     self.handle_view_count()
+
+    #     return resp
 
 
 class BaseIndex(RoutablePageMixin, BasePage):

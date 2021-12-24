@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
-
+from django.views.decorators.cache import cache_control
+from wagtail.utils.urlpatterns import decorate_urlpatterns
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
+from wagtail.images import urls as wagtailimages_urls
 
 from simpleblog import views as blog_views
 
@@ -15,6 +17,14 @@ urlpatterns = [
     path('search/', blog_views.search, name='search'),
 ]
 
+# attach cache-control parameter to /images/ and /documents/* URL
+urlpatterns += decorate_urlpatterns(
+    [
+        path("images/", include(wagtailimages_urls)),
+        path("documents/", include(wagtaildocs_urls)),
+    ],
+    cache_control(max_age=1209600),
+)
 
 if settings.DEBUG:
     from django.conf.urls.static import static

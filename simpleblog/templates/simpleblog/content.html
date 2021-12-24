@@ -31,7 +31,7 @@
         <span>{{ post.first_published_at|date:"d M Y" }}</span>
       </div>
     </div>
-    <h2 class="post-summary-title fs-5"><a href="{{ post.get_url }}">{{ post.title }}</a></h2>
+    <h2 class="post-summary-title fs-5"><a href="{{ post.get_url }}">{{ post.title|title }}</a></h2>
   </div>
   
 </article>

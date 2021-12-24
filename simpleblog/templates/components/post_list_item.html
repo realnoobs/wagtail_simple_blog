@@ -9,7 +9,7 @@
       </div>
     {% endif %}
     <div class="d-flex flex-column justify-content-center">
-      <h2 class="h6 fw-bold mb-0">{{ post.title }}</h2>
+      <h2 class="h6 fw-bold mb-0">{{ post.title|title }}</h2>
       <div class="richtext-no-p d-none d-md-block">
         {{ post.summary|truncatechars_html:120|safe }}
       </div>

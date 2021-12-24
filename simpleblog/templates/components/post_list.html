@@ -16,7 +16,7 @@
           <span class="meta-published">{{ post.opts.verbose_name|title }} {% trans "on" %} {{ post.first_published_at|date:"d M Y" }}</span>
         </div>
         <h5 class="post-list-title">
-          <a class="link-dark" href="{% pageurl post %}">{{ post.title }}</a>
+          <a class="link-dark" href="{% pageurl post %}">{{ post.title|title }}</a>
         </h5>
       </div>
     {% empty %}

@@ -129,7 +129,6 @@ USE_TZ = True
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "compressor.finders.CompressorFinder",
 ]
 
 STATICFILES_DIRS = [os.path.join(PROJECT_DIR, "static")]
@@ -241,3 +240,23 @@ SETTINGS_EXPORT = [
 ]
 
 SETTINGS_EXPORT_VARIABLE_NAME = "django_settings"
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    "django.request": {
+        "handlers": ["console"],
+        "level": "ERROR",
+        "propagate": True
+    }
+}

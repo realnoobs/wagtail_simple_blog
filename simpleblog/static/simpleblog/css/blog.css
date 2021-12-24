@@ -48,7 +48,7 @@ a {
 h1.brand-title {
   font-size: 1.75rem;
   margin-bottom: 0;
-  margin-right: 1.6rem;
+  font-weight: 800;
 }
 
 @media (min-width: 1400px) {
@@ -206,7 +206,7 @@ h1.brand-title {
 }
 
 .social-share {
-  font-size: 2rem;
+  font-size: 1.7rem;
   display: flex;
 }
 
@@ -216,7 +216,7 @@ h1.brand-title {
 }
 
 .facebook-this a:hover {
-  :#541ec1 ;
+  color: #541ec1 ;
 }
 
 .tweet-this a:hover {

@@ -20,22 +20,22 @@
         {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
     {% endblock %}
   </title>
-  <meta name="description" content="{{ seo_description|safe }}">
+  <meta name="description" content="{{ seo_description|striptags }}">
   
   {% comment %} Social Card {% endcomment %}
   <meta itemprop="name" content="{{ page.title }}"> {# microdata #}
-  <meta itemprop="description" content="{{ seo_description }}"> {# microdata #}
+  <meta itemprop="description" content="{{ seo_description|striptags }}"> {# microdata #}
   
   <meta property="og:type" content="{{ page.card_type }}"/> {# facebook #}
   <meta property="og:url" content="{{ request.build_absolute_uri }}"/> {# facebook #}
   <meta property="og:title" content="{{ page.title }}"/> {# facebook #}
-  <meta property="og:description" content="{{ seo_description|safe }}"/> {# facebook #}
+  <meta property="og:description" content="{{ seo_description|striptags }}"/> {# facebook #}
   <meta property="og:locale" content="{{ LANGUAGE_CODE }}"/> {# facebook #}
   <meta property="og:site_name" content="{{ site_name }}"/> {# facebook #}
   
   <meta name="twitter:title" content="{{ page.title }}">
   <meta name="twitter:url" content="{{ request.build_absolute_uri }}" />
-  <meta name="twitter:description" content="{{ seo_description|safe }}" />
+  <meta name="twitter:description" content="{{ seo_description|striptags }}" />
   <meta name="twitter:creator" content="{{ page.owner }}" />
   <meta name="twitter:card" content="{{ page.card_type }}" />
   <meta name="twitter:site" content="{{ site_name }}" />

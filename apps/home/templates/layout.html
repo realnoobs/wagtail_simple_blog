@@ -47,9 +47,7 @@
       <meta name="twitter:image:src" content="{{ thumbnail.url }}"> {# twitter #}
   {% endif %}
   
-  {% with settings.authentication.WebSettings.favicon as favicon %}
-    <link rel="shortcut icon" href="{% if favicon %}{{ favicon.url }}{% else %}{% static 'favicon.ico' %}{% endif %}">
-  {% endwith %}
+  <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 
   {% compress css %}
     {% block main_css %}{% endblock %}

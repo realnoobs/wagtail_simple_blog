@@ -1,0 +1,248 @@
+/* FONTS */
+
+@import url("https://fonts.googleapis.com/css2?family=Exo:wght@200;300;400;500;600;700;800;900&display=swap");
+
+.font-exo {
+  font-family: "Exo", sans-serif !important;
+}
+
+img.full-width {
+  max-width: 100%;
+  height: auto;
+}
+
+/* BASE */
+h1,
+h2,
+h3,
+h4,
+h5,
+h5 {
+  font-family: "Exo", sans-serif !important;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Container */
+@media (min-width: 992px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl {
+    max-width: 960px;
+  }
+}
+
+h1.brand-title {
+  font-size: 1.75rem;
+  margin-bottom: 0;
+  font-weight: 800;
+}
+
+@media (min-width: 1400px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl,
+  .container-xxl {
+    max-width: 960px;
+  }
+}
+
+.blog-wrapper {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.main-wrapper {
+}
+
+/* POST */
+
+.post {
+}
+
+.post .post-title {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+.post .post-meta {
+  margin-bottom: 1.5rem;
+}
+.post .post-thumbnail .post-meta {
+  position: absolute;
+  margin-top: -2rem;
+  margin-left: 0.5rem;
+}
+.post .post-summary {
+  padding: 1.5rem;
+  background: #fbfbfb;
+}
+
+.post .code-body {
+  display: grid;
+  margin-bottom: 0;
+}
+.post .code-header {
+  font-size: small;
+  padding: 0.8rem 1rem;
+  background: #efefef;
+}
+
+.post .hljs {
+}
+
+.code-block {
+  border: 1px solid #dedede;
+}
+
+.post .block-caption {
+  padding: 0.8rem;
+  text-align: center;
+  font-size: small;
+  font-style: italic;
+}
+
+.post blockquote {
+  padding: 2rem;
+  font-size: 1.3rem;
+  font-style: italic;
+}
+
+.post h1,
+.post h2,
+.post h3,
+.post h4,
+.post h5,
+.post .h1,
+.post .h2,
+.post .h3,
+.post .h4,
+.post .h5 {
+  font-weight: bold;
+}
+.post .mermaid {
+  text-align: center;
+}
+.post img.emojione {
+  height: 1rem !important;
+}
+.post .footnote {
+  font-size: small;
+}
+.post .footnote blockquote {
+  font-style: italic;
+}
+.post .footnote p,
+.footnote blockquote,
+.footnote pre {
+  margin-bottom: 3px;
+}
+
+.post-nav {
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+}
+.post-nav-item h2 {
+  font-size: 1.3rem;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+}
+.sidebar .widget {
+  margin-bottom: 1.8rem;
+}
+.sidebar .widget-title {
+  font-family: "Exo", sans-serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 700;
+}
+
+.richtext-no-p p {
+  margin-bottom: 0;
+}
+
+.block {
+  margin-bottom: 1.5rem;
+}
+
+.pagelist-block .page-item:hover,
+.series-items-block .page-item:hover {
+  background-color: #dedede ;
+}
+
+.post-list-card:hover {
+  background: #fafafa;
+}
+
+/* SIDEBAR WIDGETS */
+
+.category-list,
+.category-list ul {
+  margin-right: 5px;
+  list-style: none;
+  padding: 0;
+}
+.category-list .category-icon {
+  margin-right: 5px;
+}
+.category-list .list-item-children {
+  padding-left: 1.3rem;
+}
+
+.social-share {
+  font-size: 1.7rem;
+  display: flex;
+}
+
+.social-share a {
+  margin-right: 5px;
+  color: #b9b9b9;
+}
+
+.facebook-this a:hover {
+  color: #541ec1 ;
+}
+
+.tweet-this a:hover {
+  color: #1e9bc1;
+}
+.reddit-this a:hover {
+  color: #ef9c20;
+}
+.telegram-this a:hover {
+  color: #11a1cd;
+}
+.whatsapp-this a:hover {
+  color: #2fd75b;
+}
+
+.widget .post-list-item {
+  margin-bottom: 0.8rem;
+}
+.widget .post-list-title {
+  font-size: 0.9rem;
+  margin-bottom: 0.1rem;
+}
+
+.widget .post-list-meta {
+  font-size: small;
+  color: #a1a1a1;
+  margin-bottom: .2rem;
+}
+

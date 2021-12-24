@@ -1,0 +1,29 @@
+{% load cache i18n mptt_tags wagtailcore_tags wagtailroutablepage_tags %}
+
+<div class="widget category-list-widget">
+  {% if title %}
+    <h3 class="widget-title">{{ title|title }}</h3>
+  {% endif %}
+  <div class="widget-body">
+    <ul class="category-list">
+      <li class="category-list-item">
+        <a href="{% pageurl index %}" class="{% if node.slug in currents  %}active{% endif %}">
+          <span class="category-items-count"><i class="category-icon mdi mdi-home"></i>{% trans "All" %}</span>
+        </a>
+      </li>
+      {% recursetree categories %}
+        <li class="category-list-item">
+          <a href="{% routablepageurl index "categorized_posts" node.slug %}" class="{% if node.slug in currents  %}active{% endif %}">
+            <span class="category-items-count"><i class="category-icon mdi mdi-{% if node.icon %}{{ node.icon }}{% endif %}"></i>{{ node.name|title }}</span>
+            <span class="category-items-count">{{ node.items_count }}</span>
+          </a>
+          {% if not node.is_leaf_node %}
+              <ul class="list-item-children">
+                  {{ children }}
+              </ul>
+          {% endif %}
+        </li>
+      {% endrecursetree %}
+    </ul>
+  </div>
+</div>

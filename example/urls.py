@@ -1,20 +1,27 @@
 from django.conf import settings
 from django.urls import include, path
-from django.contrib import admin
-
+from django.views.decorators.cache import cache_control
+from wagtail.utils.urlpatterns import decorate_urlpatterns
 from wagtail.admin import urls as wagtailadmin_urls
-from wagtail.core import urls as wagtail_urls
+# from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
-
-from simple_blog import views as blog_views
+from wagtail.images import urls as wagtailimages_urls
+from apps import urls as wagtail_urls
+from simpleblog import views as blog_views
 
 urlpatterns = [
     path('admin/', include(wagtailadmin_urls)),
-    path('documents/', include(wagtaildocs_urls)),
-    path('django-admin/', admin.site.urls),
     path('search/', blog_views.search, name='search'),
 ]
 
+# attach cache-control parameter to /images/ and /documents/* URL
+urlpatterns += decorate_urlpatterns(
+    [
+        path("images/", include(wagtailimages_urls)),
+        path("documents/", include(wagtaildocs_urls)),
+    ],
+    cache_control(max_age=3600),
+)
 
 if settings.DEBUG:
     from django.conf.urls.static import static
@@ -23,6 +30,9 @@ if settings.DEBUG:
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [
+        path('__debug__/', include('debug_toolbar.urls')),
+    ]
 
 urlpatterns = urlpatterns + [
     # For anything not caught by a more specific rule above, hand over to

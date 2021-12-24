@@ -1,0 +1,18 @@
+{% load simpleblog_tags wagtailcore_tags %}
+
+<a href="{% pageurl post %}" class="d-block link-dark mb-3 {{ classnames }}">
+  <div class="post-list-card border p-2 d-flex">
+    {% if post.thumbnail %}
+      <div class="me-3">
+        {% thumbnailer post.thumbnail filter="fill" width=185 height=105 %}
+        <img src="{{ thumbnail.url }}" alt="header_image"/>
+      </div>
+    {% endif %}
+    <div class="d-flex flex-column justify-content-center">
+      <h2 class="h6 fw-bold mb-0">{{ post.title|title }}</h2>
+      <div class="richtext-no-p d-none d-md-block">
+        {{ post.summary|truncatechars_html:120|safe }}
+      </div>
+    </div>
+  </div>
+</a>

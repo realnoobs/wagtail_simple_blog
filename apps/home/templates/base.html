@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block main_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'simpleblog/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'simpleblog/css/blog.css' %}">
+{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  {{ page.custom_styles|safe }}
+{% endblock %}
+
+{% block main_js %}
+  <script defer type="text/javascript" src="{% static 'simpleblog/js/bootstrap.min.js' %}"></script>
+{% endblock main_js %}
+
+{% block extra_js %}
+  {{ block.super }}
+  {{ page.custom_styles|safe }}
+{% endblock %}
+
+{% block body_classes %}bg-white{% endblock body_classes %}
+{% block extra_top %}{% include 'components/topnav.html' %}{% endblock extra_top %}
+{% block navbar %}{% include 'components/navbar.html' %}{% endblock navbar %}
+{% block footer %}{% include 'components/footer.html' %}{% endblock footer %}

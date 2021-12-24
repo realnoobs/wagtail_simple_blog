@@ -1,0 +1,28 @@
+{% load i18n simpleblog_tags wagtailcore_tags %}
+
+{% if post_list %}
+
+<div class="widget post-list-widget">
+  {% if title %}
+    <h3 class="widget-title">{{ title|title }}</h3>
+  {% endif %}
+  <div class="widget-body">
+    {% for post in post_list %}
+      <div class="post-list-item">
+        <div class="post-list-meta">
+          {% if author %}
+            <a class="meta-author" href="#">{% nice_username post.owner %}</a>
+          {% endif %}
+          <span class="meta-published">{{ post.opts.verbose_name|title }} {% trans "on" %} {{ post.first_published_at|date:"d M Y" }}</span>
+        </div>
+        <h5 class="post-list-title">
+          <a class="link-dark" href="{% pageurl post %}">{{ post.title|title }}</a>
+        </h5>
+      </div>
+    {% empty %}
+      <div class="post-list-empty">{% trans "Recent item is empty." %}</div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endif %}

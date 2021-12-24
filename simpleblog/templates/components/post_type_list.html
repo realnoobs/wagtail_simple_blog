@@ -1,0 +1,18 @@
+{% load cache i18n mptt_tags wagtailcore_tags wagtailroutablepage_tags %}
+
+<div class="widget posttype-list-widget">
+  {% if title %}
+    <h3 class="widget-title">{{ title }}</h3>
+  {% endif %}
+  <div class="widget-body">
+    <ul class="posttype-list list-unstyled">
+      {% for slug, icon in posttypes %}
+        <li class="posttype-list-item">
+          <a href="{% routablepageurl index "posttype" slug %}" class="{% if slug in currents  %}active{% endif %}">
+            <i class="category-icon mdi mdi-{{ icon }}"></i> {{ slug|title }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>

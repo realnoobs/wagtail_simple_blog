@@ -1,0 +1,87 @@
+{% extends "simpleblog/base.html" %}
+{% load i18n static simpleblog_tags wagtailimages_tags wagtailcore_tags wagtailroutablepage_tags %}
+
+{% block main_content %}
+
+  <article id="content-{{ page.id }}" class="post post-{{ page.opts.model_name }}">
+
+    {% block post_title %}
+      <h1 class="post-title">
+        <a href="{{ page.get_url }}">{{ page.title|title }}</a>
+      </h1>
+    {% endblock post_title %}
+    
+    {% block post_meta %}
+    <div class="post-meta">
+      <span>{{ page.opts.verbose_name|title }}</span>
+      <span>{{ page.first_published_at|date:"d M Y" }}</span>
+      {% if page.category %}
+        <a href="{% routablepageurl index "categorized_posts" page.category.slug %}">
+          <span><i class="mdi mdi-tag"></i> {{ page.category|title }}</span>
+        </a>
+      {% endif %}
+      <span><i class="mdi mdi-eye"></i> {{ page.view_count }}</span>
+      <span>
+        {% if page.tags.count %}
+          {% for tag in page.tags.all %}
+            <a class="d-inline-block badge bg-soft link-primary" href="{% routablepageurl index "tagged_posts" tag.slug %}">{{ tag }}</a>
+          {% endfor %}
+        {% endif %}
+      </span>
+    </div>
+    {% endblock post_meta %}
+
+    <div class="{% if page.thumbnail or page.summary %}mb-4{% endif %}">
+      {% block post_thumbnail %}
+        {% if page.thumbnail %}
+          <div class="post-thumbnail">
+            {% image page.thumbnail fill-695x388 as thumbnail %}
+            <img src="{{ thumbnail.url }}" class="img-fluid" alt="header_image">
+          </div>
+        {% endif %}
+      {% endblock post_thumbnail %}
+      {% block post_summary %}
+        {% if page.summary %}
+          <div class="post-summary richtext-no-p">{{ page.summary|richtext }}</div>
+        {% endif %}
+      {% endblock post_summary %}
+    </div>
+    
+    {% block post_content_top %}{% endblock %}
+    
+    {% block post_content %}
+      {% for block in page.contents %}
+        {% include_block block %}
+      {% endfor %}
+    {% endblock post_content %}
+    
+    {% block post_content_bottom %}{% endblock %}
+    
+    {% block post_navigation %}
+      <section class="post-nav">
+        <div class="row mb-4">
+          <div class="post-nav-item text-start col-md-6">
+            {% if prev %}
+              <div class="post-nav-arrow"><i class="mdi mdi-arrow-left"></i> {% trans "Previous" %}</div>
+              <h2 class="post-nav-title"><a href="{% pageurl prev %}">{{ prev.title }}</a></h2>    
+            {% endif %}
+          </div>
+          <div class="post-nav-item text-end col-md-6">
+            {% if next %}
+              <div class="post-nav-arrow">{% trans "Next" %} <i class="mdi mdi-arrow-right"></i></div>
+              <h2 class="post-nav-title"><a href="{% pageurl next %}">{{ next.title }}</a></h2>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    {% endblock %}
+
+  </article>
+
+  {% block section_before_comments %}{% endblock %}
+
+  {% block section_comments %}
+    {% include 'components/comments.html' %}
+  {% endblock %}
+  
+{% endblock %}

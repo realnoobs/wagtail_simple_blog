@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load i18n static simpleblog_tags wagtailcore_tags %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'simpleblog/css/github.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'simpleblog/css/lightgallery.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'simpleblog/css/lightgallery-transitions.min.css' %}">
+{% endblock extra_css %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script defer type="text/javascript" src="{% static 'simpleblog/js/plugins/mermaid.min.js' %}"></script>
+  <script defer type="text/javascript" src="{% static 'simpleblog/js/plugins/highlight.min.js' %}"></script>
+  <script defer type="text/javascript" src="{% static 'simpleblog/js/plugins/gist.min.js' %}"></script>
+  <script defer type="text/javascript" src="{% static 'simpleblog/js/plugins/lightgallery.min.js' %}"></script>
+  <script defer type="text/javascript" src="{% static 'simpleblog/js/blog.js' %}"></script>
+{% endblock extra_js %}
+
+{% block content %}
+  <div class="blog-wrapper container">
+    <section class="main-breadcrumb px-2">
+      {% block breadcrumb %}
+      <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+          {% block breadcrumb_items %}
+            {% for parent in page.get_ancestors %}
+              {% if parent.url != request.site.root_page.url %}
+                <li class="breadcrumb-item"><a href="{{ parent.get_url }}">{{ parent.title }}</a></li>
+              {% endif %}
+            {% endfor %}
+            {% if category in currents %}
+              <li class="breadcrumb-item"><a href="{% pageurl index %}">{{ index.title }}</a></li>
+              <li class="breadcrumb-item active" aria-current="category">{{ category|title }} {% trans "Category" %}</li>
+            {% endif %}
+            {% if tag in currents %}
+              <li class="breadcrumb-item"><a href="{% pageurl index %}">{{ index.title }}</a></li>
+              <li class="breadcrumb-item active" aria-current="tag">{{ tag|title }} {% trans "Tag" %}</li>
+            {% endif %}
+            {% comment %} <li class="breadcrumb-item active" aria-current="page">{{ page.title|truncatechars:60 }}</li> {% endcomment %}
+          {% endblock breadcrumb_items %}
+        </ul>
+      </nav>
+      {% endblock breadcrumb %}
+    </section>
+    <div class="row">
+      <div class="main-wrapper col-md-9 px-3">
+        <section class="main-header">
+          {% block main_header %}{% endblock main_header %}
+        </section>
+        <section class="main-content">{% block main_content %}{% endblock main_content %}</section>
+      </div>
+      <div class="sidebar-wrapper col-md-3 px-3">
+        {% block sidebar %}
+          <div class="sidebar">
+            {% block sidebar_body %}
+              {% trans "Types" as posttype_title %}
+              {% posttypes_list index=index number=10 title=posttype_title %}  
+              {% categories_list index=index number=10 %}  
+              {% tags_list index=index number=10 %}
+            {% endblock sidebar_body %}
+            {% include 'components/social_share.html' with title="Share this .." object_or_url=page.get_url object_title=page.title %}
+          </div>
+        {% endblock sidebar %}
+      </div>
+    </div>
+  </div>
+{% endblock content %}

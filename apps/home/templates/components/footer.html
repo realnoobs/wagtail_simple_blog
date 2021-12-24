@@ -1,0 +1,40 @@
+{% load i18n static wagtailcore_tags wagtailsettings_tags %}
+
+{% get_settings %}
+{% wagtail_site as current_site %}
+
+<footer class="bg-white py-4 py-md-6">
+  <div class="container">
+    <div class="row text-center text-md-start ">
+      <div class="col-12 col-md-7 mb-3">
+        <!-- Brand -->
+        <div class="mb-2">
+          {% with settings.authentication.WebSettings.logo as logo %}
+            {% if logo %}
+              <img src="{{ logo.url }}" height="36px" alt="logo"/>
+            {% else %}
+              <h3 class="h4">{{ current_site.site_name }}</h3>
+            {% endif %}
+          {% endwith %}
+        </div>
+        <p class="border-2 border-start small mb-3 mb-md-0 px-3">
+          {% blocktrans trimmed %}
+            This site uses cookies based on a cookie policy. You can set the conditions for storing and accessing cookies in your browser.
+          {% endblocktrans %} <br>
+          {% with settings.authentication.WebSettings.organization_name as organization %}
+            <small>© 2019 - 2022 <a href="{{ current_site.root_url }}">{{ current_site.site_name }}</a>{% if organization %}, {{ organization }}{% endif %}</small>
+          {% endwith %}
+        </p>
+      </div>
+      <div class="col-12 col-md-5 d-flex justify-content-center justify-content-md-end">
+        <ul class="list-unstyled list-inline mb-md-0 fs-2">
+          {% for social in django_settings.SOCIAL_ICONS %}
+            <li class="list-inline-item list-social-item me-3">
+              <a data-bs-toggle="tooltip" data-bs-placement="top" title="{{ social.name|title }}" href="{{ social.url }}" class="text-decoration-none {{ social.classname }}"><i class="mdi mdi-{{ social.icon}}"></i></a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div> <!-- / .row -->
+  </div> <!-- / .container -->
+</footer>

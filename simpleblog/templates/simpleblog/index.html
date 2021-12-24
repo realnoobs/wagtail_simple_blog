@@ -1,0 +1,27 @@
+{% extends "simpleblog/page.html" %}
+{% load i18n static simpleblog_tags %}
+
+{% block post_meta %}{% endblock %}
+{% block post_title %}{% endblock post_title %}
+
+{% block post_content_bottom %}
+  <section class="posts row mb-4">
+    {% for post in posts %}
+      <div class="col-md-6 mb-3">{% render_post page post %}</div>
+    {% empty %}
+      <div class="empty-post col-12">{% trans "There is no content here !" %}</div>
+    {% endfor %}
+  </section>
+{% endblock %}
+
+{% block post_navigation %}
+  {% include 'components/pagination.html' with page_object=posts %}
+{% endblock %}
+
+{% block section_comments %}{% endblock %}
+
+{% block sidebar_body %}
+  {{ block.super }}
+  {% popular_posts index=page %}
+  {% featured_posts index=page %}
+{% endblock sidebar_body %}

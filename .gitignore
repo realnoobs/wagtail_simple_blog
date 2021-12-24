@@ -148,3 +148,6 @@ whoosh_index/
 
 export/
 .export/
+
+*.identifier
+staticfiles/

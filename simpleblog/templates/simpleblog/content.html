@@ -1,0 +1,37 @@
+{% load i18n static wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags %}
+
+<article id="content-{{ post.id }}" class="post post-{{ post.opts.model_name }}">
+  
+  {% if post.thumbnail %}
+    <div class="post-thumbnail">
+      {% image post.thumbnail fill-740x420 as thumbnail %}
+      <img src="{{ thumbnail.url }}" class="img-fluid" alt="header_image">
+      <div class="post-meta">
+        {% if post.tags.count %}
+          {% for tag in post.tags.all %}
+            <a class="badge bg-secondary link-primary" href="{% routablepageurl index "tagged_posts" tag.slug %}">{{ tag }}</a>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="post-summary richtext-no-p">
+    <div class="d-flex justify-content-between mb-2 small">
+      <div>
+        <span>{{ post.opts.verbose_name|title }}</span>
+        {% if post.category %}
+          {% trans "in" %} <a href="{% routablepageurl index "categorized_posts" post.category.slug %}">
+            <span>{{ post.category|title }}</span>
+          </a>
+        {% endif %}
+        <span class="d-inline-block ms-1"><i class="mdi mdi-eye"></i> {{ post.view_count }}</span>
+      </div>
+      <div>
+        <span>{{ post.first_published_at|date:"d M Y" }}</span>
+      </div>
+    </div>
+    <h2 class="post-summary-title fs-5"><a href="{{ post.get_url }}">{{ post.title|title }}</a></h2>
+  </div>
+  
+</article>

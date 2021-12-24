@@ -1,0 +1,10 @@
+{% extends "simpleblog/index.html" %}
+{% load i18n static simpleblog_tags wagtailcore_tags wagtailimages_tags %}
+
+{% block post_meta %}{% endblock %}
+
+{% block post_title %}
+  <h1 class="post-title">
+    {{ page.title }} {% trans "in" %} "<span class="text-special">{{ tag|title }}</span>"
+  </h1>
+{% endblock post_title %}

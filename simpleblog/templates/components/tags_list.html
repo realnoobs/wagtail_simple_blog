@@ -1,0 +1,17 @@
+{% load i18n wagtailroutablepage_tags %}
+
+<div class="widget tags-list-widget">
+  {% if title %}
+    <h3 class="widget-title">{{ title }}</h3>
+  {% endif %}
+  <div class="widget-body">
+    {% for tag in tags %}
+      <a href="{% routablepageurl index "tagged_posts" tag.slug %}" class="badge fw-normal border mb-1 me-1 bg-light text-body">
+        <span>{{ tag }}</span>
+        {% if tag.page_count %}<span class="ms-1">{{ tag.page_count }}</span>{% endif %}
+      </a>
+    {% empty %}
+      {% trans "No tags yet!" %}
+    {% endfor %}
+  </div>
+</div>

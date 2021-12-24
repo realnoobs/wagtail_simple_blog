@@ -23,7 +23,7 @@ urlpatterns += decorate_urlpatterns(
         path("images/", include(wagtailimages_urls)),
         path("documents/", include(wagtaildocs_urls)),
     ],
-    cache_control(max_age=1209600),
+    cache_control(max_age=3600),
 )
 
 if settings.DEBUG:

@@ -20,7 +20,7 @@
         {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
     {% endblock %}
   </title>
-  <meta name="description" content="{{ seo_description }}">
+  <meta name="description" content="{{ seo_description|safe }}">
   
   {% comment %} Social Card {% endcomment %}
   <meta itemprop="name" content="{{ page.title }}"> {# microdata #}

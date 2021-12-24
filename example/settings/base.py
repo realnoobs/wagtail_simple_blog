@@ -154,13 +154,6 @@ WAGTAILSEARCH_BACKENDS = {
     }
 }
 
-# Base URL to use when referring to full URLs within the Wagtail admin backend -
-# e.g. in notification emails. Don't include '/admin' or a trailing slash
-BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
-
-
-PAGE_CACHE_TIMEOT = int(os.getenv("PAGE_CACHE_TIMEOT", 60 * 60 * 24))
-
 REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
 REDIS_RENDITION_URL = os.getenv("REDIS_RENDITION_URL", REDIS_URL)
 
@@ -208,6 +201,9 @@ SIMPLEBLOG = {
     "ARTICLE_PARENTPAGE_TYPES": ["simpleblog.Index", "home.Series"],
 }
 
+BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
+PAGE_CACHE_TIMEOT = int(os.getenv("PAGE_CACHE_TIMEOT", 60 * 60 * 24))
+GOOGLE_SITE_VERIFICATION = os.getenv("GOOGLE_SITE_VERIFICATION", "")
 FAVICON_URL = "/favicon.ico"
 SOCIAL_ICONS = [
     {
@@ -231,6 +227,8 @@ SOCIAL_ICONS = [
 ]
 
 SETTINGS_EXPORT = [
+    "PAGE_CACHE_TIMEOT",
+    "GOOGLE_SITE_VERIFICATION",
     "BASE_URL",
     "SITE_NAME",
     "FAVICON_URL",

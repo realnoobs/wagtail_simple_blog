@@ -31,7 +31,7 @@
     </div>
     {% endblock post_meta %}
 
-    <div class="mb-4">
+    <div class="{% if page.thumbnail or page.summary %}mb-4{% endif %}">
       {% block post_thumbnail %}
         {% if page.thumbnail %}
           <div class="post-thumbnail">

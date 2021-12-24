@@ -145,6 +145,8 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 MEDIA_URL = "/media/"
 
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
 
 # Wagtail settings
 SITE_NAME = os.environ.setdefault("SITE_NAME", "example")

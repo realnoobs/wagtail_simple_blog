@@ -1,0 +1,27 @@
+{% extends "simpleblog/index.html" %}
+{% load i18n static simpleblog_tags wagtailcore_tags wagtailimages_tags %}
+
+{% block post_meta %}{% endblock %}
+
+{% block post_title %}
+  <h1 class="post-title">
+    {{ page.title }} {% trans "in" %} "<span class="text-special">{{ category|title }}</span>"
+  </h1>
+{% endblock post_title %}
+
+{% block post_thumbnail %}
+  {% if category_object.thumbnail %}
+    <div class="post-thumbnail">
+      {% image category_object.thumbnail fill-695x388 as thumbnail %}
+      <img src="{{ thumbnail.url }}" class="img-fluid" alt="header_image">
+    </div>
+  {% endif %}
+{% endblock post_thumbnail %}
+
+{% block post_summary %}
+  {% if category_object.description %}
+    <div class="post-summary richtext-no-p">{{ category_object.description|richtext }}</div>
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock  %}

@@ -1,0 +1,57 @@
+{% extends "simpleblog/base.html" %}
+{% load i18n static simpleblog_tags wagtailcore_tags wagtailsearchpromotions_tags %}
+
+{% block body_class %}template-searchresults{% endblock %}
+{% block title %}{% trans "Search Something" %}{% endblock %}
+
+{% block breadcrumb_items %}
+  <li class="breadcrumb-item"><a href="/">{% trans "Home" %}</a></li>
+  <li class="breadcrumb-item active" aria-current="page">{% trans "Search page" %}</li>
+{% endblock breadcrumb_items %}
+
+{% block main_content %}
+
+{% get_search_promotions search_query as search_promotions %}
+
+<section class="col-12">
+
+  <div class="text-center pb-4 pt-3">
+    <h1 class="display-3">{% trans "Search for" %} {% if search_query %}{{ search_query|title }}{% else %}{% trans "Something" %}{% endif %}</h1>
+    <p class="fw-ligter">{% trans "Search Article, Series, Video Tutorial or Download Stuff" %}</p>
+  </div>
+
+  <form class="mb-4" action="{% url 'search' %}" method="get">
+    <div class="input-group mb-3">
+      <input type="text" name="query"{% if search_query %} value="{{ search_query }}"{% endif %} class="form-control" placeholder="Search something ..." aria-label="Search query">
+      <button class="btn btn-outline-primary" type="submit">{% trans "Search Now" %}</button>
+    </div>
+  </form>
+
+  {% if search_promotions %}
+    <div class="search-results search-promotion mb-3">
+      <h2 class="search-promotion-title">{% trans "Recommended for You.." %}</h2>
+      {% for search_promotion in search_promotions %}
+        {% include 'components/post_list_item.html' with post=search_promotion.page.specific classnames="bg-soft" %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if search_results %}
+    <div class="search-results">
+      {% for result in search_results.object_list %}
+        {% include 'components/post_list_item.html' with post=result.specific %}
+      {% endfor %}
+      </div>
+    {% include 'components/pagination.html' with page_object=search_results %}
+  {% elif search_query %}
+    <div>{% trans "Ooops, No results found for query" %} "{{ search_query }}" </div>
+  {% endif %}
+
+</section>
+
+{% endblock %}
+
+{% block sidebar_body %}
+  {% popular_posts title="Popular Posts" %}
+  {% featured_posts title="Featured Posts" %}
+{% endblock sidebar_body %}

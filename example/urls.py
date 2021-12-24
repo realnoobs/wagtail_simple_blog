@@ -6,7 +6,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from simple_blog import views as blog_views
+from simpleblog import views as blog_views
 
 urlpatterns = [
     path('admin/', include(wagtailadmin_urls)),

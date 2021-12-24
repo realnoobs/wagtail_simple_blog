@@ -6,10 +6,13 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
-    "example.home",
+    'apps.themes',
+    "apps.home",
+    "apps.auth",
     "mptt",
-    "simple_blog",
+    "simpleblog",
     "django_social_share",
+    "wagtail.contrib.settings",
     "wagtail.contrib.routable_page",
     "wagtail.contrib.search_promotions",
     "wagtail.contrib.table_block",
@@ -53,9 +56,7 @@ ROOT_URLCONF = "example.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            os.path.join(PROJECT_DIR, "templates"),
-        ],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -63,6 +64,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.auth.contexts.settings_export",
             ],
         },
     },
@@ -84,6 +86,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = "authentication.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -140,8 +144,8 @@ MEDIA_URL = "/media/"
 
 
 # Wagtail settings
-
-WAGTAIL_SITE_NAME = os.environ.setdefault("WAGTAIL_SITE_NAME", "example")
+SITE_NAME = os.environ.setdefault("SITE_NAME", "example")
+WAGTAIL_SITE_NAME = SITE_NAME
 
 # Search
 # https://docs.wagtail.io/en/stable/topics/search/backends.html
@@ -153,7 +157,7 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-BASE_URL = os.getenv("BASE_URL", "http://example.com")
+BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
 
@@ -188,7 +192,40 @@ if SENTRY_DSN:
     )
 
 
-SIMPLE_BLOG = {
-    "INDEX_SUBPAGE_TYPES": ["simple_blog.Article", "home.Series"],
-    "ARTICLE_PARENTPAGE_TYPES": ["simple_blog.Index", "home.Series"],
+SIMPLEBLOG = {
+    "INDEX_SUBPAGE_TYPES": ["simpleblog.Article", "home.Series"],
+    "ARTICLE_PARENTPAGE_TYPES": ["simpleblog.Index", "home.Series"],
 }
+
+FAVICON_URL = "/favicon.ico"
+LOGO_URL = "img/logo.svg"
+SOCIAL_ICONS = [
+    {
+        "name": "help",
+        "icon": "lifebuoy",
+        "classname": "link-danger",
+        "url": "/help/",
+    },
+    {
+        "name": "facebook",
+        "icon": "facebook",
+        "classname": "link-facebook",
+        "url": "https://www.facebook.com/sasri",
+    },
+    {
+        "name": "twitter",
+        "icon": "twitter",
+        "classname": "link-info",
+        "url": "https://www.twitter.com/sasri",
+    },
+]
+
+SETTINGS_EXPORT = [
+    "BASE_URL",
+    "SITE_NAME",
+    "LOGO_URL",
+    "FAVICON_URL",
+    "SOCIAL_ICONS",
+]
+
+SETTINGS_EXPORT_VARIABLE_NAME = "django_settings"

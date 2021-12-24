@@ -1,0 +1,8 @@
+{% extends "simpleblog/page.html" %}
+{% load i18n simpleblog_tags %}
+
+{% block sidebar_body %}
+  {{ block.super }}
+  {% related_posts_by_category index=index post=page %}
+  {% recent_posts index=index %}
+{% endblock sidebar_body %}

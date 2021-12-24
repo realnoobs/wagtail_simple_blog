@@ -1,0 +1,7 @@
+{% extends 'simpleblog/post.html' %}
+
+{% block post_content_bottom %}
+  {% for post in items %}
+    {% include 'components/post_list_item.html' with post=post %}
+  {% endfor %}
+{% endblock %}

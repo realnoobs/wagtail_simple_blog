@@ -1,0 +1,43 @@
+{% load i18n static wagtailcore_tags wagtailimages_tags wagtailsettings_tags %}
+{% comment %} {% load simplemenus_tags  %} {% endcomment %}
+
+{% comment %} Navbar {% endcomment %}
+{% get_settings %}
+{% wagtail_site as current_site %}
+
+<nav class="navbar position-sticky navbar-expand-lg navbar-light border-bottom shadow-sm bg-white py-3" style="top: 0;z-index: 1000;">
+  <div class="container">
+    <a class="navbar-brand py-2" href="{{ current_site.root_url }}">
+      {% with settings.authentication.WebSettings.logo as logo %}
+        {% if logo %}
+          <img src="{{ logo.url }}" height="36px" alt="{{ current_site.site_name }}"/>
+        {% else %}
+          <h1 class="brand-title">{{ current_site.site_name }}</h1>
+        {% endif %}
+      {% endwith %}
+    </a>
+    <div class="collapse navbar-collapse" id="main_nav">
+      {% comment %} {% render_menu 'main_menu' %} {% endcomment %}
+    </div>
+    <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-2" action="/search/">
+      <input type="search" name="query" class="form-control" placeholder="Search..." aria-label="Search">
+    </form>
+    <div class="d-inline-block d-md-none">
+      <button class="btn btn-white px-2 py-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvasWithBackdrop"><i class="fs-2 mdi mdi-menu"></i></button>
+    </div>
+  </div>
+</nav>
+{% comment %} End Navbar {% endcomment %}
+
+
+{% comment %} Mobile Navigation {% endcomment %}
+<div class="mobile-nav offcanvas offcanvas-start" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasLabel">Offcanvas</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    {% comment %} {% render_menu 'main_menu' %} {% endcomment %}
+  </div>
+</div>
+{% comment %} Mobile Navigation {% endcomment %}

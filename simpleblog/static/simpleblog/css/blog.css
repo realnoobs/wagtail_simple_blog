@@ -45,6 +45,12 @@ a {
   }
 }
 
+h1.brand-title {
+  font-size: 1.75rem;
+  margin-bottom: 0;
+  margin-right: 1.6rem;
+}
+
 @media (min-width: 1400px) {
   .container,
   .container-sm,

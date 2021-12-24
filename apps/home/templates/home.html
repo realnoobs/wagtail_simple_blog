@@ -2,11 +2,13 @@
 {% load static wagtailcore_tags %}
 
 {% block content %}
-  {% for block in page.contents %}
-    <section class="block-{{ block.block_type }}">
-      <div class="container">
-        {% include_block block %}
-      </div>
-    </section>
-  {% endfor %}
+  {% if page.contents %}
+    {% for block in page.contents %}
+      <section class="block-{{ block.block_type }}">
+        <div class="container">
+          {% include_block block %}
+        </div>
+      </section>
+    {% endfor %}
+  {% endif %}
 {% endblock content %}

@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     "modelcluster",
     "taggit",
     "storages",
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -45,13 +44,15 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.cache.UpdateCacheMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
 ROOT_URLCONF = "example.urls"
@@ -143,9 +144,6 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 MEDIA_URL = "/media/"
 
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
-
 # Wagtail settings
 SITE_NAME = os.environ.setdefault("SITE_NAME", "example")
 WAGTAIL_SITE_NAME = SITE_NAME
@@ -182,7 +180,7 @@ if REDIS_URL:
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
             },
-        }
+        },
     }
 
 
@@ -204,7 +202,7 @@ if SENTRY_DSN:
 
 
 SIMPLEBLOG = {
-    "PAGE_CACHE_TIMEOUT": 0,
+    "PAGE_CACHE_TIMEOUT": 60,
     "INDEX_SUBPAGE_TYPES": ["simpleblog.Article", "home.Series"],
     "ARTICLE_PARENTPAGE_TYPES": ["simpleblog.Index", "home.Series"],
 }
@@ -242,20 +240,16 @@ SETTINGS_EXPORT_VARIABLE_NAME = "django_settings"
 
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
-    },
-    "django.request": {
+    "root": {
         "handlers": ["console"],
-        "level": "ERROR",
-        "propagate": True
-    }
+        "level": "WARNING",
+    },
+    "django.request": {"handlers": ["console"], "level": "ERROR", "propagate": True},
 }

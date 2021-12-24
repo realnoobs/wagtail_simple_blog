@@ -8,16 +8,16 @@
 <html class="no-js" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 <head>
   {% firstof page.seo_title page.title view.title as seo_title %}
-  {% firstof page.search_description page.summary page.content as seo_description %}
+  {% firstof page.search_description page.summary page.contents as seo_description %}
   {% firstof current_site.site_name django_settings.SITE_NAME as site_name %}
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>
-    {{ seo_title | truncatewords:15 }}
+    {{ seo_title|title|truncatewords:15 }}
     {% block title_suffix %}
         {% wagtail_site as current_site %}
-        {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
+        {% if current_site and current_site.site_name %}- {{ current_site.site_name|title }}{% endif %}
     {% endblock %}
   </title>
   <meta name="description" content="{{ seo_description|striptags }}">

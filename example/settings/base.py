@@ -210,7 +210,6 @@ SIMPLEBLOG = {
 }
 
 FAVICON_URL = "/favicon.ico"
-LOGO_URL = "img/logo.svg"
 SOCIAL_ICONS = [
     {
         "name": "help",

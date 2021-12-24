@@ -13,7 +13,7 @@
             {% if logo %}
               <img src="{{ logo.url }}" height="36px" alt="logo"/>
             {% else %}
-              <img src="{% static 'img/logo.svg' %}" height="36px" alt="logo"/>
+              <h3 class="h4">{{ current_site.site_name }}</h3>
             {% endif %}
           {% endwith %}
         </div>

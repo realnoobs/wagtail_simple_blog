@@ -49,6 +49,10 @@
   
   <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 
+  {% comment %} {% with settings.authentication.WebSettings.favicon as favicon %}
+    <link rel="shortcut icon" href="{% if favicon %}{{ favicon.url }}{% else %}{% static 'img/favicon.ico' %}{% endif %}">
+  {% endwith %} {% endcomment %}
+
   {% compress css %}
     {% block main_css %}{% endblock %}
     {% block extra_css %}{% endblock %}

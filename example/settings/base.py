@@ -6,13 +6,15 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
-    'apps.themes',
     "apps.home",
     "apps.auth",
     "mptt",
     "simpleblog",
+    "simple_menus",
+    "simple_menus.wagtail",
     "django_social_share",
     "wagtail.contrib.settings",
+    "wagtail.contrib.modeladmin",
     "wagtail.contrib.routable_page",
     "wagtail.contrib.search_promotions",
     "wagtail.contrib.table_block",
@@ -29,6 +31,7 @@ INSTALLED_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail.core",
+    "compressor",
     "modelcluster",
     "taggit",
     "storages",
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_cleanup",
 ]
 
 MIDDLEWARE = [
@@ -160,6 +164,7 @@ WAGTAILSEARCH_BACKENDS = {
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
+REDIS_RENDITION_URL = os.getenv("REDIS_RENDITION_URL", REDIS_URL)
 
 if REDIS_URL:
     SESSION_ENGINE = "django.contrib.sessions.backends.cache"
@@ -168,6 +173,13 @@ if REDIS_URL:
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        },
+        "renditions": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_RENDITION_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
             },
@@ -193,6 +205,7 @@ if SENTRY_DSN:
 
 
 SIMPLEBLOG = {
+    "PAGE_CACHE_TIMEOUT": 0,
     "INDEX_SUBPAGE_TYPES": ["simpleblog.Article", "home.Series"],
     "ARTICLE_PARENTPAGE_TYPES": ["simpleblog.Index", "home.Series"],
 }

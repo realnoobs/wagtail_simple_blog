@@ -92,14 +92,15 @@ a {
 }
 .post .code-header {
   font-size: small;
-  padding: 0.5rem 0.8rem;
+  padding: 0.8rem 1rem;
   background: #efefef;
-  border-radius: 5px 5px 0 0;
 }
 
 .post .hljs {
-  background-color: #f7f7f7;
-  border-radius: 0 0 5px 5px;
+}
+
+.code-block {
+  border: 1px solid #dedede;
 }
 
 .post .block-caption {
@@ -226,7 +227,7 @@ a {
 }
 
 .widget .post-list-item {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
 }
 .widget .post-list-title {
   font-size: 0.9rem;
@@ -236,5 +237,6 @@ a {
 .widget .post-list-meta {
   font-size: small;
   color: #a1a1a1;
+  margin-bottom: .2rem;
 }
 

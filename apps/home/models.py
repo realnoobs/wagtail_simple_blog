@@ -1,16 +1,13 @@
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import StreamFieldPanel
 from wagtail.core.fields import StreamField
-from simpleblog.blocks import CodeBlock, OEmbedBlock, GistBlock, PageListBlock, RichtextBlock
+from simpleblog.blocks import REGISTERED_BLOCKS
 from simpleblog.models import BasePage, Post
 
 
 class Home(BasePage):
     contents = StreamField(
-        [
-            ("richtext", RichtextBlock()),
-            ("choosen_pages", PageListBlock()),
-        ],
+        REGISTERED_BLOCKS,
         null=True,
         blank=True,
         help_text=_("Contents"),
@@ -24,13 +21,7 @@ class Home(BasePage):
 
 class Series(Post):
     contents = StreamField(
-        [
-            ("richtext", RichtextBlock()),
-            ("choosen_pages", PageListBlock()),
-            ("embed", OEmbedBlock()),
-            ("code", CodeBlock()),
-            ("gist", GistBlock()),
-        ],
+        REGISTERED_BLOCKS,
         null=True,
         blank=True,
         help_text=_("Contents"),

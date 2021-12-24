@@ -6,7 +6,7 @@
 <footer class="bg-white py-4 py-md-6">
   <div class="container">
     <div class="row text-center text-md-start ">
-      <div class="col-12 col-md-5 mb-3">
+      <div class="col-12 col-md-7 mb-3">
         <!-- Brand -->
         <div class="mb-2">
           {% with settings.authentication.WebSettings.logo as logo %}
@@ -26,7 +26,7 @@
           {% endwith %}
         </p>
       </div>
-      <div class="col-12 col-md-7 d-flex justify-content-center justify-content-md-end">
+      <div class="col-12 col-md-5 d-flex justify-content-center justify-content-md-end">
         <ul class="list-unstyled list-inline mb-md-0 fs-2">
           {% for social in django_settings.SOCIAL_ICONS %}
             <li class="list-inline-item list-social-item me-3">

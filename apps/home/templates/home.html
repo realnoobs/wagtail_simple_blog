@@ -1,10 +1,12 @@
-{% extends "simpleblog/page.html" %}
-{% load static %}
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
 
-{% block body_class %}{% endblock %}
-
-{% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% endblock extra_css %}
-
-{% block content %}{% endblock content %}
+{% block content %}
+  {% for block in page.contents %}
+    <section class="block-{{ block.block_type }}">
+      <div class="container">
+        {% include_block block %}
+      </div>
+    </section>
+  {% endfor %}
+{% endblock content %}

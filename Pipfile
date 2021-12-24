@@ -14,6 +14,9 @@ whitenoise = "*"
 sentry-sdk = "*"
 gunicorn = "*"
 django-redis = "*"
+django-compressor = "*"
+django-simple-menus = "*"
+django-cleanup = "*"
 
 [dev-packages]
 flake8 = "*"

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+{% load  i18n static compress %}
+{% load wagtailcore_tags wagtailuserbar wagtailimages_tags %}
+{% comment %} {% load compressor %} {% endcomment %}
+{% wagtail_site as current_site %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html class="no-js" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<head>
+  {% firstof page.seo_title page.title view.title as seo_title %}
+  {% firstof page.search_description page.summary page.content as seo_description %}
+  {% firstof current_site.site_name django_settings.SITE_NAME as site_name %}
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    {{ seo_title | truncatewords:15 }}
+    {% block title_suffix %}
+        {% wagtail_site as current_site %}
+        {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
+    {% endblock %}
+  </title>
+  <meta name="description" content="{{ seo_description }}">
+  
+  {% comment %} Social Card {% endcomment %}
+  <meta itemprop="name" content="{{ page.title }}"> {# microdata #}
+  <meta itemprop="description" content="{{ seo_description }}"> {# microdata #}
+  
+  <meta property="og:type" content="{{ page.card_type }}"/> {# facebook #}
+  <meta property="og:url" content="{{ request.build_absolute_uri }}"/> {# facebook #}
+  <meta property="og:title" content="{{ page.title }}"/> {# facebook #}
+  <meta property="og:description" content="{{ seo_description|safe }}"/> {# facebook #}
+  <meta property="og:locale" content="{{ LANGUAGE_CODE }}"/> {# facebook #}
+  <meta property="og:site_name" content="{{ site_name }}"/> {# facebook #}
+  
+  <meta name="twitter:title" content="{{ page.title }}">
+  <meta name="twitter:url" content="{{ request.build_absolute_uri }}" />
+  <meta name="twitter:description" content="{{ seo_description|safe }}" />
+  <meta name="twitter:creator" content="{{ page.owner }}" />
+  <meta name="twitter:card" content="{{ page.card_type }}" />
+  <meta name="twitter:site" content="{{ site_name }}" />
+  
+  {% if page.thumbnail %}
+      {% image page.thumbnail fill-96x96  as thumbnail %}
+      <meta itemprop="image" content="{{ thumbnail.url }}">  {# microdata #}
+      <meta property="og:image" content="{{ thumbnail.url }}"/> {# facebook #}
+      <meta name="twitter:image:src" content="{{ thumbnail.url }}"> {# twitter #}
+  {% endif %}
+  
+  {% with settings.authentication.WebSettings.favicon as favicon %}
+    <link rel="shortcut icon" href="{% if favicon %}{{ favicon.url }}{% else %}{% static 'favicon.ico' %}{% endif %}">
+  {% endwith %}
+
+  {% compress css %}
+    {% block main_css %}{% endblock %}
+    {% block extra_css %}{% endblock %}
+  {% endcompress %}
+
+</head>
+<body {% block body_attrs %}{% endblock %} class="{% block body_classes %}{% endblock body_classes %}">
+  {% wagtailuserbar %}
+  {% block outter_wrapper %}
+    {% block extra_top %}{% endblock %}
+    {% block navbar %}{% endblock %}
+    {% block subnav %}{% endblock %}
+    {% block main %}
+      {% block content %}{{ content }}{% endblock %}
+    {% endblock main %}
+    {% block extra_bottom %}{% endblock %}
+    {% block footer %}{% endblock %}
+  {% endblock outter_wrapper %}
+  {% block modal %}{% endblock modal %}
+
+  {% compress js %}
+    {% block main_js %}{% endblock main_js %}
+    {% block extra_js %}{% endblock extra_js %}
+  {% endcompress %}
+  {% block messages %}{% endblock messages %}
+
+</body>
+</html>

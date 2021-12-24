@@ -1,22 +1,17 @@
-from django.template.loader import render_to_string
+from django.core.validators import validate_slug
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.core.blocks.field_block import (
     BooleanBlock,
     CharBlock,
     ChoiceBlock,
-    FloatBlock,
-    IntegerBlock,
     PageChooserBlock,
     RichTextBlock,
     TextBlock,
-    URLBlock,
 )
-from wagtail.core.blocks.list_block import ListBlock
+
 from wagtail.core.blocks.struct_block import StructBlock
-from wagtail.images.blocks import ImageChooserBlock
 from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
 from wagtail.embeds.blocks import EmbedBlock
 
 
@@ -45,40 +40,6 @@ table_options = {
     "renderer": "text",
     "autoColumnSize": False,
 }
-
-typed_table = TypedTableBlock(
-    [
-        ("text", CharBlock()),
-        ("numeric", FloatBlock()),
-        ("rich_text", RichTextBlock()),
-        ("image", ImageChooserBlock()),
-        (
-            "country",
-            ChoiceBlock(
-                choices=[
-                    ("be", "Belgium"),
-                    ("fr", "France"),
-                    ("de", "Germany"),
-                    ("nl", "Netherlands"),
-                    ("pl", "Poland"),
-                    ("uk", "United Kingdom"),
-                ]
-            ),
-        ),
-    ],
-    group="Content Blocks",
-)
-
-
-class DiagramBlock(StructBlock):
-    title = CharBlock(required=True)
-    caption = RichTextBlock(required=False)
-    code = TextBlock(required=True)
-
-    class Meta:
-        icon = "code"
-        template = "streamblocks/diagram_block.html"
-        group = "Embed Media Blocks"
 
 
 class CodeBlock(StructBlock):
@@ -123,6 +84,7 @@ class GistBlock(StructBlock):
 
 
 class OEmbedBlock(StructBlock):
+    name = CharBlock(validators=[validate_slug])
     caption = CharBlock(required=False)
     embed = EmbedBlock(max_width=800, max_height=400)
 
@@ -132,46 +94,10 @@ class OEmbedBlock(StructBlock):
         group = "Embed Media Blocks"
 
 
-class ImageBlock(StructBlock):
-    image = ImageChooserBlock()
-    caption = CharBlock(required=False)
-    classnames = CharBlock(required=False)
-
-    class Meta:
-        icon = "image"
-        template = "streamblocks/image_block.html"
-
-
-class ImageGalleryBlock(StructBlock):
-
-    title = CharBlock(required=False)
-    width = IntegerBlock(required=True, default=185)
-    height = IntegerBlock(required=True, default=105)
-    classnames = CharBlock(required=False)
-    images = ListBlock(ImageBlock())
-
-    class Meta:
-        icon = "image"
-        template = "streamblocks/gallery_block.html"
-        group = "Relational Blocks"
-
-
 class RichtextBlock(RichTextBlock):
     class Meta:
         icon = "doc-full"
         template = "streamblocks/richtext_block.html"
-        group = "Content Blocks"
-
-
-class QuoteBlock(StructBlock):
-    quote = TextBlock(required=True)
-    author = CharBlock(required=False)
-    link = URLBlock(required=False)
-
-    class Meta:
-        icon = "openquote"
-        template = "streamblocks/quote_block.html"
-        group = "Content Blocks"
 
 
 class CustomTableBlock(TableBlock):
@@ -191,53 +117,23 @@ class CustomTableBlock(TableBlock):
         group = "Content Blocks"
 
 
-class PageListBlock(StructBlock):
-
-    LIST = "list"
-    CARD = "card"
-
-    STYLE_CHOICE = (
-        (LIST, "Page List"),
-        (CARD, "Page Card"),
-    )
-
-    title = CharBlock(required=False)
-    style = ChoiceBlock(choices=STYLE_CHOICE, default=LIST)
-    columns = IntegerBlock(min_value=1, max_value=4, default=2)
-    show_thumbnail = BooleanBlock(default=True, required=False)
-    show_summary = BooleanBlock(default=True, required=False)
-    pages = ListBlock(child_block=PageChooserBlock(page_type="simpleblog.Post"))
-
-    def get_template(self, value, context=None):
-        templates_map = {
-            PageListBlock.LIST: "streamblocks/pagelist_block.html",
-            PageListBlock.CARD: "streamblocks/pagecard_block.html",
-        }
-        return templates_map[value["style"]]
-
-    def render(self, value, context=None):
-        template = self.get_template(value, context=context)
-        if not template:
-            return self.render_basic(value, context=context)
-        if context is None:
-            new_context = self.get_context(value)
-        else:
-            new_context = self.get_context(value, parent_context=dict(context))
-        return mark_safe(render_to_string(template, new_context))
-
+class PostChooserBlock(PageChooserBlock):
     class Meta:
-        group = "Relational Blocks"
+        template = "streamblocks/post_block.html"
+        group = "Content Blocks"
+
+
+class HTMLBlock(TextBlock):
+    def render(self, value, context=None):
+        return mark_safe(value)
 
 
 REGISTERED_BLOCKS = [
     ("richtext", RichtextBlock()),
-    ("quote", QuoteBlock()),
-    ("choosen_pages", PageListBlock()),
-    ("code", CodeBlock()),
-    ("gist", GistBlock()),
-    ("diagram", DiagramBlock()),
-    ("embed", OEmbedBlock()),
-    ("image_gallery", ImageGalleryBlock()),
+    ("html", HTMLBlock()),
+    ("codeblock", CodeBlock()),
+    ("post_chooser", PostChooserBlock(page_type="simpleblog.Post")),
+    ("oembed", OEmbedBlock()),
+    ("gist_embed", GistBlock()),
     ("table", CustomTableBlock(table_options=table_options)),
-    ("table_typed", typed_table),
 ]

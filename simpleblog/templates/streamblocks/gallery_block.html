@@ -1,9 +1,0 @@
-{% load wagtailcore_tags %}
-<section class="block gallery-block">
-  <h3 class="title mb-3">{{ value.title }}</h2>
-  <div class="row row-cols-2 row-cols-md-3 g-2 lightgallery">
-    {% for image_block in value.images %}
-      {% include_block image_block with height=value.height width=value.width %}
-    {% endfor %}
-  </div>
-</section>

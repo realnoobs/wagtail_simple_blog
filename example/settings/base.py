@@ -234,7 +234,6 @@ SOCIAL_ICONS = [
 SETTINGS_EXPORT = [
     "BASE_URL",
     "SITE_NAME",
-    "LOGO_URL",
     "FAVICON_URL",
     "SOCIAL_ICONS",
 ]

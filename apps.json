@@ -1,0 +1,53 @@
+{
+    "name": "SimpleBlog",
+    "description": "SimpleBlog is simple blog app based on Wagtail CMS + Django Web Framework",
+    "website": "https://www.rizkisasri.com/",
+    "repository": "https://github.com/realnoobs/wagtail_simple_blog",
+    "logo": "https://www.rizkisasri.com/static/brands/simpleblog/logo.svg",
+    "keywords": [
+      "blog",
+      "cms",
+      "wagtail",
+      "django"
+    ],
+    "success_url": "/",
+    "env": {
+      "ENVIRONTMENT": {
+        "description": "Environtment mode used for simpleblog 'production' or 'development'.",
+        "value": "production"
+      },
+      "SECRET_KEY": {
+        "description": "A secret key for verifying the integrity of signed cookies.",
+        "generator": "secret"
+      },
+      "BASE_URL": {
+        "description": "Public root URL of the blog installation. This will be used in the emails.",
+        "value": "https://CHANGE.herokuapp.com"
+      },
+      "STORAGE": {
+        "description": "Storage type 'locale' or 'digitalocean', 'awss3', 'minio'.",
+        "value": "locale"
+      },
+      "DISQUS_ACCOUNT": {
+        "description": "Disqus webname.",
+        "value": ""
+      }
+    },
+    "formation": {
+      "web": {
+        "quantity": 1,
+        "size": "FREE"
+      },
+      "worker": {
+        "quantity": 1,
+        "size": "FREE"
+      }
+    },
+    "image": "heroku/python",
+    "addons": [ "heroku-redis", "heroku-postgresql"],
+    "buildpacks": [
+      {
+        "url": "heroku/python"
+      }
+    ]
+  }
